@@ -36,7 +36,8 @@ function error() {
     '\nUsage: node cli.js << source-file.yaml >> [ actions ] { ... action args ... }\n' +
     '       ... [ insert ] << key-in-source-file >> << to-be-inserted.yaml >>\n' +
     '       ... [ transform-d3 ]\n' +
-    '       ... [ transform-js ]\n'
+    '       ... [ transform-js ]\n' +
+    '       ... [ count-key ]\n'
   );
 }
 
@@ -49,6 +50,7 @@ async function main() {
     let jsUpdatedSource;
     // Main options
     switch (process.argv[3]) {
+
       case 'insert':
         if (process.argv.length === 6) {
           const _new = await readFile({ path: process.argv[5] });
@@ -66,6 +68,14 @@ async function main() {
           writeResult({
             jsUpdatedSource: reyamlCore.transform_d3({ sourceObj: jsSource, rootName: process.argv[2] })
           });
+        } else {
+          error();
+        }
+        break;
+
+      case 'count-key':
+        if (process.argv.length === 4) {
+          console.log(reyamlCore.count_key({ sourceObj: jsSource }));
         } else {
           error();
         }
