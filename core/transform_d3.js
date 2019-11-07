@@ -37,14 +37,14 @@ function transform_d3_from_object({ sourceObj }) {
           if (typeof value === 'object') {
             const na = transform_d3_from_object({ sourceObj: value });
             const o = {};
-            o.name = `${key}:`;
+            o.name = key;
             o.children = na;
             a.push(o);
           } else {
             const o = {};
-            o.name = '';
+            o.name = key;
             o.attributes = {};
-            o.attributes[key] = value;
+            o.attributes[""] = value;
             a.push(o);
           }
         });
