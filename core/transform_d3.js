@@ -1,8 +1,18 @@
+const rootName = 'root';
+
 function transform_d3_master({ sourceObj }) {
   if (Array.isArray(sourceObj))
-    return transform_d3_from_array({ sourceObj, rootName: 'root' });
+    return transform_d3_from_array({ sourceObj, rootName });
+  else if (sourceObj != null && Object.keys(sourceObj).length > 1)
+    return transform_d3_from_multi_key_object({ sourceObj });
   else
     return transform_d3_from_object({ sourceObj });
+}
+
+function transform_d3_from_multi_key_object({ sourceObj }) {
+  const o = {};
+  o[rootName] = sourceObj;
+  return transform_d3_from_object({ sourceObj: o });
 }
 
 function transform_d3_from_array({ sourceObj, rootName }) {
