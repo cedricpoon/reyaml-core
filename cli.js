@@ -33,11 +33,12 @@ async function writeResult({ jsUpdatedSource }) {
 
 function error() {
   console.log(
-    '\nUsage: node cli.js << source-file.yaml >> [ actions ] { ... action args ... }\n' +
+    '\nUsage: npm start << source-file.yaml >> [ actions ] { ... action args ... }\n' +
     '       ... [ insert ] << key-in-source-file >> << to-be-inserted.yaml >>\n' +
     '       ... [ transform-d3 ]\n' +
     '       ... [ transform-js ]\n' +
-    '       ... [ count-key ]\n'
+    '       ... [ count-key ]\n' +
+    '       ... [ mark-line ] << line number >>\n'
   );
 }
 
@@ -51,10 +52,19 @@ async function main() {
     // Main options
     switch (process.argv[3]) {
 
+      case 'mark-line':
+        if (process.argv.length === 5) {
+          const line_no = parseInt(process.argv[4], 10);
+          writeResult({ jsUpdatedSource: reyamlCore.mark_line({ sourceObj: jsSource, lineNo: line_no }) });
+        } else {
+          error();
+        }
+        break;
+
       case 'insert':
         if (process.argv.length === 6) {
           const _new = await readFile({ path: process.argv[5] });
-          const jsNew = reyamlCore.transform_js({ yamlString: source });
+          const jsNew = reyamlCore.transform_js({ yamlString: _new });
           writeResult({
             jsUpdatedSource: reyamlCore.insert({ key: process.argv[4] , jsSource, jsNew })
           });
