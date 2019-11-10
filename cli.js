@@ -34,11 +34,12 @@ async function writeResult({ jsUpdatedSource }) {
 function error() {
   console.log(
     '\nUsage: npm start << source-file.yaml >> [ actions ] { ... action args ... }\n' +
-    '       ... [ insert ] << key-in-source-file >> << to-be-inserted.yaml >>\n' +
+    '       ... [ insert ]          << key-in-source-file >>  << to-be-inserted.yaml >>\n' +
     '       ... [ transform-d3 ]\n' +
     '       ... [ transform-js ]\n' +
     '       ... [ count-key ]\n' +
-    '       ... [ mark-line ] << line number >>\n'
+    '       ... [ mark-line ]       << line-number >>\n' +
+    '       ... [ count-junk-line ] << line-number >>\n'
   );
 }
 
@@ -51,6 +52,15 @@ async function main() {
     let jsUpdatedSource;
     // Main options
     switch (process.argv[3]) {
+
+      case 'count-junk-line':
+        if (process.argv.length === 5) {
+          const line_no = parseInt(process.argv[4], 10);
+          console.log(reyamlCore.count_junk_line({ sourceYaml: source, lineNo: line_no }));
+        } else {
+          error();
+        }
+        break;
 
       case 'mark-line':
         if (process.argv.length === 5) {
@@ -76,7 +86,7 @@ async function main() {
       case 'transform-d3':
         if (process.argv.length === 4) {
           writeResult({
-            jsUpdatedSource: reyamlCore.transform_d3({ sourceObj: jsSource, rootName: process.argv[2] })
+            jsUpdatedSource: reyamlCore.transform_d3({ sourceObj: jsSource })
           });
         } else {
           error();

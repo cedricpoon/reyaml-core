@@ -1,4 +1,25 @@
 const rootName = 'root';
+const marking = {
+  marker: '*',
+  content: '**',
+  d3: {
+    nodeSvgShape: {
+      shape: 'circle',
+      shapeProps: {
+        r: 10,
+        fill: 'red',
+      },
+    },
+  }
+};
+
+function transform_mark({ sourceObj, key }) {
+  if (sourceObj[key] && sourceObj[key].hasOwnProperty(marking.marker) && sourceObj[key].hasOwnProperty(marking.content)) {
+    return { marked: true, pureContent: sourceObj[key][marking.content] };
+  } else {
+    return { marked: false, pureContent: sourceObj[key] };
+  }
+}
 
 function transform_d3_master({ sourceObj }) {
   if (Array.isArray(sourceObj))
@@ -34,17 +55,18 @@ function transform_d3_from_object({ sourceObj }) {
       Object
         .entries(sourceObj)
         .forEach(([key, value]) => {
-          if (typeof value === 'object') {
-            const na = transform_d3_from_object({ sourceObj: value });
-            const o = {};
+          const { marked, pureContent } = transform_mark({ sourceObj, key });
+          if (typeof pureContent === 'object') {
+            const o = marked ? { ...marking.d3 } : {} ;
+            const na = transform_d3_from_object({ sourceObj: pureContent });
             o.name = key;
             o.children = na;
             a.push(o);
           } else {
-            const o = {};
+            const o = marked ? { ...marking.d3 } : {} ;
             o.name = key;
             o.attributes = {};
-            o.attributes[""] = value;
+            o.attributes[""] = pureContent;
             a.push(o);
           }
         });
