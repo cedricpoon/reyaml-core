@@ -71,9 +71,17 @@ function transform_d3_from_object({ sourceObj }) {
           }
         });
     } else {
-      sourceObj.forEach(o => {
-        const r = transform_d3_from_object({ sourceObj: o });
-        a.push.apply(a, r);
+      sourceObj.forEach((o, key) => {
+        if (typeof o === 'object' && o && !o.hasOwnProperty(marking.marker)) {
+          const r = transform_d3_from_object({ sourceObj: o });
+          a.push.apply(a, r);
+        } else {
+          const { marked, pureContent } = transform_mark({ sourceObj, key });
+          const x = marked ? { ...marking.d3 } : {};
+          x.name = pureContent;
+          x.attributes = {};
+          a.push(x);
+        }
       });
     }
   }
