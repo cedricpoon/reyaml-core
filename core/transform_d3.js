@@ -72,7 +72,7 @@ function transform_d3_from_object({ sourceObj }) {
         });
     } else {
       sourceObj.forEach((o, key) => {
-        if (typeof o === 'object' && o && !marking.marker in o) {
+        if (typeof o === 'object' && o && !o.hasOwnProperty(marking.marker)) {
           const r = transform_d3_from_object({ sourceObj: o });
           a.push.apply(a, r);
         } else {
