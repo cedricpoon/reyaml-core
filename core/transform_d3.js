@@ -8,6 +8,7 @@ const marking = {
       shapeProps: {
         r: 10,
         fill: 'red',
+        stroke: 'red',
       },
     },
   }
