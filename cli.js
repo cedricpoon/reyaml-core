@@ -1,6 +1,6 @@
 const fs = require('fs');
 const jsYaml = require('js-yaml');
-const reyamlCore = require('./core');
+const rc = require('./core');
 
 function readFile({ path }) {
   return new Promise((resolve, reject) => {
@@ -46,8 +46,8 @@ function error() {
 async function main() {
   if (process.argv.length >= 4) {
     const source = await readFile({ path: process.argv[2] });
-    // YAML to JSON
-    const jsSource = reyamlCore.transform_js({ yamlString: source });
+    // create Ryaml Object
+    const ryaml = new rc.Ryaml(source);
     // Result
     let jsUpdatedSource;
     // Main options
@@ -56,7 +56,7 @@ async function main() {
       case 'count-junk-line':
         if (process.argv.length === 5) {
           const line_no = parseInt(process.argv[4], 10);
-          console.log(reyamlCore.count_junk_line({ sourceYaml: source, lineNo: line_no }));
+          console.log(ryaml.countJunkLine({ lineNo: line_no }));
         } else {
           error();
         }
@@ -65,7 +65,7 @@ async function main() {
       case 'mark-line':
         if (process.argv.length === 5) {
           const line_no = parseInt(process.argv[4], 10);
-          writeResult({ jsUpdatedSource: reyamlCore.mark_line({ sourceObj: jsSource, lineNo: line_no }) });
+          writeResult({ jsUpdatedSource: ryaml.json.markLine({ lineNo: line_no }).raw });
         } else {
           error();
         }
@@ -74,10 +74,8 @@ async function main() {
       case 'insert':
         if (process.argv.length === 6) {
           const _new = await readFile({ path: process.argv[5] });
-          const jsNew = reyamlCore.transform_js({ yamlString: _new });
-          writeResult({
-            jsUpdatedSource: reyamlCore.insert({ key: process.argv[4] , jsSource, jsNew })
-          });
+          const insertee = new rc.Ryaml(_new).json;
+          writeResult({ jsUpdatedSource: ryaml.json.insert({ key: process.argv[4], insertee }).raw });
         } else {
           error();
         }
@@ -85,9 +83,7 @@ async function main() {
 
       case 'transform-d3':
         if (process.argv.length === 4) {
-          writeResult({
-            jsUpdatedSource: reyamlCore.transform_d3({ sourceObj: jsSource })
-          });
+          writeResult({ jsUpdatedSource: ryaml.json.d3 });
         } else {
           error();
         }
@@ -95,7 +91,7 @@ async function main() {
 
       case 'count-key':
         if (process.argv.length === 4) {
-          console.log(reyamlCore.count_key({ sourceObj: jsSource }));
+          console.log(ryaml.json.keyCount);
         } else {
           error();
         }
@@ -103,9 +99,7 @@ async function main() {
 
       case 'transform-js':
         if (process.argv.length === 4) {
-          writeResult({
-            jsUpdatedSource: jsSource
-          });
+          writeResult({ jsUpdatedSource: ryaml.json.raw });
         } else {
           error();
         }
