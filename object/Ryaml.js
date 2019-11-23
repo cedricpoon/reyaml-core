@@ -3,19 +3,17 @@ const { transform_js } = require('../core/transform_js');
 const Rjson = require('./Rjson');
 
 class Ryaml {
-  constructor(yaml) {
-    this.yaml = yaml;
+  constructor(raw) {
+    this.raw = raw;
   }
 
   countJunkLine({ lineNo }) {
-    return count_junk_line({ sourceYaml: this.yaml, lineNo });
+    return count_junk_line({ sourceYaml: this.raw, lineNo });
   }
 
   get json() {
-    return new Rjson(transform_js({ yamlString: this.yaml }));
+    return new Rjson(transform_js({ yamlString: this.raw }));
   }
-
-  get raw() { return this.yaml; }
 }
 
 module.exports = Ryaml;
