@@ -9,7 +9,7 @@ class Traverse {
       if (sourceObj)
         Object.keys(sourceObj).map(name => {
           if ((!Array.isArray(sourceObj) || typeof sourceObj[name] !== 'object') && index++ === lineNo) this._callback(sourceObj, name);
-          if (typeof sourceObj[name] === 'object') index = traverse({ sourceObj: sourceObj[name], lineNo, index });
+          if (typeof sourceObj[name] === 'object') index = _tr({ sourceObj: sourceObj[name], lineNo, index });
         });
       return index;
     }
@@ -19,7 +19,7 @@ class Traverse {
     return this;
   }
 
-  with(f) { this._callback = f; return this; }
+  to(f) { this._callback = f; return this; }
 
   get result() { return this._source; }
 }
