@@ -19,7 +19,6 @@ class Rjson {
   get d3() { return transform_d3({ sourceObj: this.raw }) }
 
   get keyCount() { return count_key({ sourceObj: this.raw }); }
-  
 }
 
 module.exports = Rjson;
