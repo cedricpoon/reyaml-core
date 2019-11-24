@@ -19,7 +19,7 @@ class Traverse {
     return this;
   }
 
-  to(f) { this._callback = f; return this; }
+  update(f) { this._callback = f; return this; }
 
   get result() { return this._source; }
 }
