@@ -1,7 +1,11 @@
+const { marker, markerMap } = require('../config.js');
 const traverse = require('../utils/traverse');
 
 function appendAsterisk(obj, name) {
-  obj[name] = { '*': '', '**': obj[name] };
+  const x = obj[name];
+  obj[name] = {};
+  obj[name][marker.name] = markerMap.highlight.name;
+  obj[name][marker.content] = x;
 }
 
 function mark({ sourceObj, lineNo }) {
