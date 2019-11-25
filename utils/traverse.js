@@ -23,8 +23,8 @@ class Traverse {
     const _tr = ({ sourceObj, obj }) => {
       if (sourceObj)
         Object.keys(sourceObj).map(name => {
-          if ((!Array.isArray(sourceObj) || typeof sourceObj[name] !== 'object') && obj === sourceObj[name]) this._callback(sourceObj, name);
-          else if (typeof sourceObj[name] === 'object') index = _tr({ sourceObj: sourceObj[name], obj });
+          if (obj === sourceObj[name]) this._callback(sourceObj, name);
+          else if (typeof sourceObj[name] === 'object') _tr({ sourceObj: sourceObj[name], obj });
         });
     }
 
