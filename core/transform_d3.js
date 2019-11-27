@@ -1,24 +1,13 @@
-const rootName = 'root';
-const marking = {
-  marker: '*',
-  content: '**',
-  d3: {
-    nodeSvgShape: {
-      shape: 'circle',
-      shapeProps: {
-        r: 10,
-        fill: 'red',
-        stroke: 'red',
-      },
-    },
-  }
-};
+const { marker, markerMap, rootName } = require('../config');
 
 function transform_mark({ sourceObj, key }) {
-  if (sourceObj[key] && sourceObj[key].hasOwnProperty(marking.marker) && sourceObj[key].hasOwnProperty(marking.content)) {
-    return { marked: true, pureContent: sourceObj[key][marking.content] };
+  if (sourceObj[key] && sourceObj[key].hasOwnProperty(marker.name)) {
+    if (sourceObj[key].hasOwnProperty(marker.content))
+      return { marked: true, type: sourceObj[key][marker.name], pureContent: sourceObj[key][marker.content] };
+    else
+      return { marked: true, type: sourceObj[key][marker.name], pureContent: null };
   } else {
-    return { marked: false, pureContent: sourceObj[key] };
+    return { marked: false, type: null, pureContent: sourceObj[key] };
   }
 }
 
@@ -56,15 +45,15 @@ function transform_d3_from_object({ sourceObj }) {
       Object
         .entries(sourceObj)
         .forEach(([key, value]) => {
-          const { marked, pureContent } = transform_mark({ sourceObj, key });
+          const { marked, type, pureContent } = transform_mark({ sourceObj, key });
           if (typeof pureContent === 'object') {
-            const o = marked ? { ...marking.d3 } : {} ;
+            const o = marked ? { ...markerMap[type].d3 } : {} ;
             const na = transform_d3_from_object({ sourceObj: pureContent });
             o.name = key;
             o.children = na;
             a.push(o);
           } else {
-            const o = marked ? { ...marking.d3 } : {} ;
+            const o = marked ? { ...markerMap[type].d3 } : {} ;
             o.name = key;
             o.attributes = {};
             o.attributes[""] = pureContent;
@@ -73,12 +62,12 @@ function transform_d3_from_object({ sourceObj }) {
         });
     } else {
       sourceObj.forEach((o, key) => {
-        if (typeof o === 'object' && o && !o.hasOwnProperty(marking.marker)) {
+        if (typeof o === 'object' && o && !o.hasOwnProperty(marker.name)) {
           const r = transform_d3_from_object({ sourceObj: o });
           a.push.apply(a, r);
         } else {
-          const { marked, pureContent } = transform_mark({ sourceObj, key });
-          const x = marked ? { ...marking.d3 } : {};
+          const { marked, type, pureContent } = transform_mark({ sourceObj, key });
+          const x = marked ? { ...markerMap[type].d3 } : {};
           x.name = pureContent;
           x.attributes = {};
           a.push(x);

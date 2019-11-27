@@ -1,20 +1,19 @@
-function appendAsterisk(obj, name) {
-  obj[name] = { '*': '', '**': obj[name] };
-}
+const { marker, markerMap } = require('../config.js');
+const traverse = require('../utils/traverse');
 
-function traverse({ sourceObj, lineNo, index }) {
-  if (sourceObj)
-    Object.keys(sourceObj).map(name => {
-      if ((!Array.isArray(sourceObj) || typeof sourceObj[name] !== 'object') && index++ === lineNo) appendAsterisk(sourceObj, name);
-      if (typeof sourceObj[name] === 'object') index = traverse({ sourceObj: sourceObj[name], lineNo, index });
-    });
-  return index;
+function appendAsterisk(obj, name) {
+  const x = obj[name];
+  obj[name] = {};
+  obj[name][marker.name] = markerMap.highlight.name;
+  obj[name][marker.content] = x;
 }
 
 function mark({ sourceObj, lineNo }) {
   if (lineNo !== null)
-    traverse({ sourceObj, lineNo, index: 0 });
-  return sourceObj
+    traverse(sourceObj)
+      .update((o, name) => { appendAsterisk(o, name) })
+      .byLineNo(lineNo);
+  return sourceObj;
 }
 
 module.exports = { mark_line: mark };

@@ -39,7 +39,8 @@ function error() {
     '       ... [ transform-js ]\n' +
     '       ... [ count-key ]\n' +
     '       ... [ mark-line ]       << line-number >>\n' +
-    '       ... [ count-junk-line ] << line-number >>\n'
+    '       ... [ count-junk-line ] << line-number >>\n' +
+    '       ... [ truncate ]        << line-number >>  << level >> \n'
   );
 }
 
@@ -52,6 +53,16 @@ async function main() {
     let jsUpdatedSource;
     // Main options
     switch (process.argv[3]) {
+
+      case 'truncate':
+        if (process.argv.length === 6) {
+          const line_no = parseInt(process.argv[4], 10);
+          const level = parseInt(process.argv[5], 10);
+          writeResult({ jsUpdatedSource: ryaml.json.truncate({ lineNo: line_no, level }).raw });
+        } else {
+          error();
+        }
+        break;
 
       case 'count-junk-line':
         if (process.argv.length === 5) {
