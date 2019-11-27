@@ -1,3 +1,6 @@
+# Example 2 Sample YAML, OCP v3.5, RedHat
+# Copied from https://docs.openshift.com/container-platform/3.5/dev_guide/templates.html
+
 apiVersion: v1
 kind: Template
 metadata:

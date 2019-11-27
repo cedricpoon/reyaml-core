@@ -2,13 +2,13 @@
   "name": "reyaml-cli",
   "version": "0.0.1",
   "description": "CLI editor for project reyaml",
-  "main": "cli.js",
+  "main": "index.js",
   "dependencies": {
     "js-yaml": "^3.13.1"
   },
   "devDependencies": {},
   "scripts": {
-    "start": "node ./cli.js", 
+    "start": "node ./cli.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Cedric Poon",
