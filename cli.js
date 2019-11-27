@@ -1,6 +1,6 @@
 const fs = require('fs');
 const jsYaml = require('js-yaml');
-const rc = require('./index');
+const rc = require('./core');
 
 function readFile({ path }) {
   return new Promise((resolve, reject) => {
