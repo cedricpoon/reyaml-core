@@ -16,19 +16,23 @@ function truncChildren({ sourceObj, level }) {
 }
 
 function findParent({ sourceObj, obj, level }) {
-  for (i = 0; i < level; i++)
+  for (i = 0; i < level; i++) {
+    let topMost = true;
     traverse(sourceObj)
-      .update((o, name) => { obj = o; if (Array.isArray(obj)) i--; })
+      .update((o, name) => { topMost = false; obj = o; if (Array.isArray(obj)) i--; })
       .byObject(obj);
-  return obj;
+    if (topMost) return { parent: obj, i: level - i };
+  }
+  return { parent: obj, i: 0 };
 }
 
 function truncate({ sourceObj, level, lineNo }) {
   if (level !== null)
     traverse(sourceObj)
       .update((o, name) => {
-        sourceObj = findParent({ sourceObj, obj: o, level });  // `o` as parent
-        truncChildren({ sourceObj, level: level * 2 }); // `o` as parent
+        const { parent, i } = findParent({ sourceObj, obj: o, level });  // `o` as parent
+        sourceObj = parent;
+        truncChildren({ sourceObj, level: level * 2 - i }); // `o` as parent
       })
       .byLineNo(lineNo);
   return sourceObj;
