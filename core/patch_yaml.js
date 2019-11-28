@@ -13,9 +13,12 @@ const replace = (ln, map) => Object
   .reduce((retn, k) => retn.replace(new RegExp(k, 'g'), map[k]), ln);
 
 function appendBlockScalar(yamlString) {
-  return yamlString
-    .split('\n')
-    .map(x => x)
+  const yamlArr = yamlString.split('\n');
+  return yamlArr
+    .forEach((x, i) => {
+      if (i + 1 < yamlArr.length && isKeyPair(x) && !isKeyPair(yamlArr[i + 1]) && !isArray(yamlArr[i + 1]))
+        yamlArr[i + 1] += ' |+';
+    })
     .join('\n');
 }
 
@@ -34,7 +37,7 @@ function unifyBlockScalar(yamlString) {
 }
 
 function patch({ yamlString }) {
-  const result = unifyBlockScalar(yamlString);
+  const result = appendBlockScalar(unifyBlockScalar(yamlString));
   return result;
 }
 
