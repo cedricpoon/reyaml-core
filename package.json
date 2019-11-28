@@ -1,7 +1,7 @@
 {
-  "name": "reyaml-cli",
+  "name": "reyaml-core",
   "version": "0.0.1",
-  "description": "CLI editor for project reyaml",
+  "description": "Core functionalities in project reyaml",
   "main": "index.js",
   "dependencies": {
     "js-yaml": "^3.13.1"
