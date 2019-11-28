@@ -1,6 +1,10 @@
 {
   "name": "reyaml-core",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/cedricpoon/reyaml-core.git"
+  },
   "description": "Core functionalities in project reyaml",
   "main": "index.js",
   "dependencies": {
