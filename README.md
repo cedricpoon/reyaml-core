@@ -1,2 +1,2 @@
-# REyaml-cli
- Core in REyaml
+# REyaml-core
+ Core & CLI in REyaml
