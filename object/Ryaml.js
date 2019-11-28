@@ -1,5 +1,6 @@
 const { count_junk_line } = require('../core/count_junk_line');
 const { transform_js } = require('../core/transform_js');
+const { patch_yaml } = require('../core/patch_yaml');
 const Rjson = require('./Rjson');
 
 class Ryaml {
@@ -12,7 +13,7 @@ class Ryaml {
   }
 
   get json() {
-    return new Rjson(transform_js({ yamlString: this.raw }));
+    return new Rjson(transform_js({ yamlString: patch_yaml({ yamlString: this.raw }) }));
   }
 }
 

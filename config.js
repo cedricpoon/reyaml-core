@@ -1,9 +1,8 @@
 const rootName = 'root';
 
-const marker = {
-  name: '*',
-  content: '**',
-}
+const marker = { name: '*', content: '**' }
+
+const blockScalar4Traverse = { '\\|\\-': '|+', '>\\-': '|+', '>\\+': '|+' };
 
 const markerMap = {
   highlight: {
@@ -38,4 +37,4 @@ const markerMap = {
   }
 }
 
-module.exports = { rootName, marker, markerMap };
+module.exports = { rootName, marker, markerMap, blockScalar4Traverse };
