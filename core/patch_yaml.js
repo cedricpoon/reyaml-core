@@ -48,7 +48,7 @@ const traverseLine = (yamlString, callback) => {
 function wrapKeyPair(yamlString) {
   return traverseLine(yamlString, (prev, curr, next) => {
     if (isKeyPair(curr))
-      return getKey(curr) + ` ${literalBlockChoppingScalar}\n` + ' '.repeat(countIndentWithHyphen(curr) + 2) + getValue(curr);
+      return  `${getKey(curr)} ${literalBlockChoppingScalar}\n` + ' '.repeat(countIndentWithHyphen(curr) + 2) + getValue(curr);
     else
       return curr;
   });
