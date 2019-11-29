@@ -27,7 +27,8 @@ const replace = (ln, map) => Object
 const _trLn = (yStr, f) => yStr
   .split('\n')
   .reduce(({ result, prevIndent }, ln, i, yamlArr) =>
-    i === 0 || isNode(yamlArr[i - 1]) || countIndent(ln) < prevIndent ?
+    i === 0 || isNode(yamlArr[i - 1]) || countIndent(ln) < prevIndent
+    ?
       {
         result: result + `${f(
           (i - 1 > 0) ? yamlArr[i - 1] : null,
