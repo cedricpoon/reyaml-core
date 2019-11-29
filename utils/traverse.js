@@ -4,6 +4,13 @@ class Traverse {
     this._callback = () => {};
   }
 
+  _getNewLineNo(ln) {
+    let n = 0;
+    try { n = ln.match(/\n/g).length }
+    catch { /* ignored */ }
+    return n;
+  }
+
   byLineNo(lineNo) {
     const _tr = ({ sourceObj, lineNo, index }) => {
       if (sourceObj)
