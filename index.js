@@ -1,4 +1,4 @@
-const { is_junk_line } = require('./core/count_junk_line');
+const { is_junk_line } = require('./func/count_junk_line');
 const Ryaml = require('./object/Ryaml');
 
 module.exports = {

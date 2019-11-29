@@ -1,8 +1,8 @@
-const { insert } = require('../core/insert');
-const { transform_d3 } = require('../core/transform_d3');
-const { mark_line } = require('../core/mark_line');
-const { count_key } = require('../core/count_key');
-const { truncate } = require('../core/truncate');
+const { insert } = require('../func/insert');
+const { transform_d3 } = require('../func/transform_d3');
+const { mark_line } = require('../func/mark_line');
+const { count_key } = require('../func/count_key');
+const { truncate } = require('../func/truncate');
 
 class Rjson {
   constructor(raw) {

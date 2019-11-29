@@ -1,6 +1,6 @@
-const { count_junk_line } = require('../core/count_junk_line');
-const { transform_js } = require('../core/transform_js');
-const { patch_yaml } = require('../core/patch_yaml');
+const { count_junk_line } = require('../func/count_junk_line');
+const { transform_js } = require('../func/transform_js');
+const { patch_yaml } = require('../func/patch_yaml');
 const Rjson = require('./Rjson');
 
 class Ryaml {
