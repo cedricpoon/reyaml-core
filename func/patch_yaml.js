@@ -1,5 +1,7 @@
 const { blockScalar4Traverse, literalBlockScalar, literalBlockChoppingScalar } = require('../config');
 
+const { is_parser_ignorable } = require('./count_junk_line');
+
 const getKey = ln => ln.match(/^\s*-?\s*([^\s]+|\".*\"|\'.*\')\s*:/g);
 
 const startWithKey = ln => getKey(ln) !== null;
@@ -27,7 +29,7 @@ const replace = (ln, map) => Object
 const _trLn = (yStr, f) => yStr
   .split('\n')
   .reduce(({ result, prevIndent }, ln, i, yamlArr) =>
-    i === 0 || isNode(yamlArr[i - 1]) || countIndent(ln) < prevIndent
+    i === 0 || isNode(yamlArr[i - 1]) || countIndent(ln) <= prevIndent
     ?
       {
         result: result + `${f(
@@ -64,6 +66,12 @@ function appendBlockScalar(yamlString) {
   });
 }
 
+function removeEmptyLine(yamlString) {
+  return yamlString
+    .split('\n')
+    .reduce((a, x) => is_parser_ignorable(x) ? a : a += `${x}\n`, '');
+}
+
 function unifyBlockScalar(yamlString) {
   return traverseLine(yamlString, (prev, curr, next) => {
     if (startWithKey(curr) || isArray(curr))
@@ -73,7 +81,7 @@ function unifyBlockScalar(yamlString) {
 }
 
 function patch({ yamlString }) {
-  let result = appendBlockScalar(wrapKeyPair(unifyBlockScalar(yamlString)));
+  let result = appendBlockScalar(wrapKeyPair(unifyBlockScalar(removeEmptyLine(yamlString))));
   result = result.replace(/\n*$/g, '');
   return result;
 }

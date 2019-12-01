@@ -1,24 +1,6 @@
-const fs = require('fs');
 const jsYaml = require('js-yaml');
 const rc = require('./index');
-
-function readFile({ path }) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(path, 'utf8', (err, data) => {
-      if (err) { reject(err); }
-      resolve(data);
-    });
-  });
-}
-
-function writeFile({ path, result }) {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(path, result, (err) => {
-      if (err) { reject(err); }
-      resolve();
-    });
-  });
-}
+const { readFile, writeFile } = require('./utils/file_io');
 
 async function writeResult({ jsUpdatedSource }) {
   const newFileName = `${process.argv[2].split('.').slice(0, -1).join('.')}-updated.json`;

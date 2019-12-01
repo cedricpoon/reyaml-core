@@ -1,4 +1,6 @@
-const { marker, markerMap, rootName } = require('../config');
+const { marker, markerMap, rootName, maxStringLength } = require('../config');
+
+const limitString = (ln, n) => (ln.length > n) ? ln.substr(0, n-1) + '...' : ln;
 
 function transform_mark({ sourceObj, key }) {
   if (sourceObj[key] && sourceObj[key].hasOwnProperty(marker.name)) {
@@ -49,14 +51,14 @@ function transform_d3_from_object({ sourceObj }) {
           if (typeof pureContent === 'object') {
             const o = marked ? { ...markerMap[type].d3 } : {} ;
             const na = transform_d3_from_object({ sourceObj: pureContent });
-            o.name = key;
+            o.name = limitString(key, maxStringLength);
             o.children = na;
             a.push(o);
           } else {
             const o = marked ? { ...markerMap[type].d3 } : {} ;
-            o.name = key;
+            o.name = limitString(key, maxStringLength);
             o.attributes = {};
-            o.attributes[""] = pureContent;
+            o.attributes[""] = limitString(pureContent, maxStringLength);
             a.push(o);
           }
         });
