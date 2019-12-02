@@ -4,10 +4,11 @@ const { marker, markerMap } = require('../config');
 function truncChildren({ sourceObj, level }) {
   const _trunc = (o, lv) => Object.keys(o).map(name => {
     if (o[name]) {
-      if (typeof o[name] === 'object' && lv > 0) _trunc(o[name], lv - (Array.isArray(o[name]) || o[name].hasOwnProperty(marker.name) ? 0 : 1));
+      if (typeof o[name] === 'object' && lv > 0)
+        _trunc(o[name], lv - (Array.isArray(o[name]) || o[name].hasOwnProperty(marker.name) ? 0 : 1));
       else if (typeof o[name] === 'object') {
         o[name] = {};
-        o[name][marker.name] = markerMap.truncated.name;
+        o[name][marker.name] = markerMap.truncatedDown.name;
       }
     }
   });
@@ -30,7 +31,17 @@ function truncate({ sourceObj, level, lineNo }) {
   if (level !== null)
     traverse(sourceObj)
       .update((o, name) => {
-        const { parent, i } = findParent({ sourceObj, obj: o, level });  // `o` as parent
+        let { parent, i } = findParent({
+          sourceObj,
+          obj: o,
+          level: o.hasOwnProperty(marker.name) ? level + 1 : level
+        });  // `o` as parent
+        if (sourceObj !== parent && Object.keys(parent).length > 1) {
+          const x = {};
+          x[marker.name] = markerMap.truncatedUp.name;
+          x[marker.content] = { ...parent };
+          parent = x;
+        }
         sourceObj = parent;
         truncChildren({ sourceObj, level: level * 2 - i }); // `o` as parent
       })

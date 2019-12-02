@@ -1,11 +1,26 @@
 const literalBlockScalar = '|+';
 
+const getTruncatedD3 = attribute => ({
+  attributes: { '': attribute },
+  nodeSvgShape: {
+    shape: 'rect',
+    shapeProps: {
+      width: 15,
+      height: 15,
+      x: -10,
+      y: -10,
+      stroke: 'grey',
+      fill: 'yellow',
+    }
+  },
+});
+
 const config = {
-  rootName: 'root',
+  rootName: '§',
   literalBlockScalar: literalBlockScalar,
   literalBlockChoppingScalar: '|-',
   blockScalar4Traverse: { '\\|\\-': literalBlockScalar, '>\\-': literalBlockScalar, '>\\+': literalBlockScalar },
-  maxStringLength: 17,
+  maxStringLength: 15,
   marker: { name: '*', content: '**' },
   markerMap: {
     highlight: {
@@ -21,22 +36,13 @@ const config = {
         },
       }
     },
-    truncated: {
-      name: 'truncated',
-      d3: {
-        attributes: { '': '.....' },
-        nodeSvgShape: {
-          shape: 'rect',
-          shapeProps: {
-            width: 20,
-            height: 20,
-            x: -10,
-            y: -10,
-            stroke: 'lightgrey',
-            fill: 'lightgrey',
-          }
-        },
-      }
+    truncatedDown: {
+      name: 'truncatedDown',
+      d3: getTruncatedD3('↓↓↓↓↓'),
+    },
+    truncatedUp: {
+      name: 'truncatedUp',
+      d3: getTruncatedD3('↑↑↑↑↑'),
     }
   }
 };
