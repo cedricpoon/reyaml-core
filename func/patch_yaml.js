@@ -14,7 +14,9 @@ const hasNoValue = ln => ln.match(/:\s*$/g) !== null;
 
 const isKeyPair = ln => startWithKey(ln) && !endWithScalar(ln) && getValue(ln) !== null;
 
-const isNode = ln => (startWithKey(ln) || isArray(ln)) && !endWithScalar(ln)
+const isNode = ln => startWithKey(ln) || isArray(ln);
+
+const isString = ln => !startWithKey(ln) && !isArray(ln);
 
 const isArray = ln => ln.match(/^\s*-\s+[^-\s].*/g) !== null;
 
@@ -28,8 +30,8 @@ const replace = (ln, map) => Object
 
 const _trLn = (yStr, f) => yStr
   .split('\n')
-  .reduce(({ result, prevIndent }, ln, i, yamlArr) =>
-    i === 0 || isNode(yamlArr[i - 1]) || countIndent(ln) <= prevIndent
+  .reduce(({ result, prevIndent, isScalar }, ln, i, yamlArr) =>
+    !isScalar && isNode(ln)
     ?
       {
         result: result + `${f(
@@ -37,19 +39,23 @@ const _trLn = (yStr, f) => yStr
           ln,
           (i + 1 < yamlArr.length) ? yamlArr[i + 1] : null
         )}\n`,
-        prevIndent: countIndentWithHyphen(ln)
+        prevIndent: countIndentWithHyphen(ln),
+        isScalar: (i + 1 < yamlArr.length)
+          && ((isNode(ln) && isString(yamlArr[i + 1]))
+          || (startWithKey(ln) && endWithScalar(ln)))
       }
     :
-      { result: result + `${ln}\n`, prevIndent }
-  , { result: '', prevIndent: 0 });
+      {
+        result: result + `${ln}\n`,
+        prevIndent,
+        isScalar: isScalar && i + 1 < yamlArr.length && prevIndent < countIndent(yamlArr[i + 1])
+      }
+  , { result: '', prevIndent: 0, isScalar: false });
 
-const traverseLine = (yamlString, callback) => {
-  const { result, prevIndent } = _trLn(yamlString, callback);
-  return result;
-}
+const traverseNode = (yamlString, callback) => _trLn(yamlString, callback).result;
 
 function wrapKeyPair(yamlString) {
-  return traverseLine(yamlString, (prev, curr, next) => {
+  return traverseNode(yamlString, (prev, curr, next) => {
     if (isKeyPair(curr))
       return  `${getKey(curr)} ${literalBlockChoppingScalar}\n` + ' '.repeat(countIndentWithHyphen(curr) + 2) + getValue(curr);
     else
@@ -58,7 +64,7 @@ function wrapKeyPair(yamlString) {
 }
 
 function appendBlockScalar(yamlString) {
-  return traverseLine(yamlString, (prev, curr, next) => {
+  return traverseNode(yamlString, (prev, curr, next) => {
     if (next !== null && startWithKey(curr) && hasNoValue(curr) && !startWithKey(next) && !isArray(next))
       return `${curr} ${literalBlockScalar}`;
     else
@@ -73,7 +79,7 @@ function removeEmptyLine(yamlString) {
 }
 
 function unifyBlockScalar(yamlString) {
-  return traverseLine(yamlString, (prev, curr, next) => {
+  return traverseNode(yamlString, (prev, curr, next) => {
     if (startWithKey(curr) || isArray(curr))
       return replace(curr, blockScalar4Traverse);
     return curr;
