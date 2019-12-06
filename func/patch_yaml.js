@@ -1,4 +1,4 @@
-const { blockScalar4Traverse, literalBlockScalar, literalBlockChoppingScalar } = require('../config');
+const { blockScalar4Traverse, literalBlockScalar, literalBlockChoppingScalar, tabSize } = require('../config');
 
 const { is_parser_ignorable } = require('./count_junk_line');
 
@@ -58,7 +58,7 @@ const traverseNode = (yamlString, callback) => _trLn(yamlString, callback).resul
 function wrapKeyPair(yamlString) {
   return traverseNode(yamlString, (prev, curr, next) => {
     if (isKeyPair(curr))
-      return  `${getKey(curr)} ${literalBlockChoppingScalar}\n` + ' '.repeat(countIndentWithHyphen(curr) + 2) + getValue(curr);
+      return  `${getKey(curr)} ${literalBlockChoppingScalar}\n` + ' '.repeat(countIndentWithHyphen(curr) + tabSize) + getValue(curr);
     else
       return curr;
   });
