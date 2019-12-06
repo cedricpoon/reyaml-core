@@ -42,7 +42,7 @@ const _trLn = (yStr, f) => yStr
         prevIndent: countIndentWithHyphen(ln),
         isScalar: (i + 1 < yamlArr.length)
           && ((isNode(ln) && isString(yamlArr[i + 1]))
-          || (isKeyPair(ln) && countIndent(yamlArr[i + 1]))
+          || (isKeyPair(ln) && countIndentWithHyphen(ln) < countIndent(yamlArr[i + 1]))
           || (startWithKey(ln) && endWithScalar(ln)))
       }
     :
