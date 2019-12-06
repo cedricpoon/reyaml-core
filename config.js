@@ -17,6 +17,7 @@ const getTruncatedD3 = attribute => ({
 
 const config = {
   rootName: '§',
+  tabSize: 2,
   literalBlockScalar: literalBlockScalar,
   literalBlockChoppingScalar: '|-',
   blockScalar4Traverse: { '\\|\\-': literalBlockScalar, '>\\-': literalBlockScalar, '>\\+': literalBlockScalar },
