@@ -11,8 +11,8 @@ function appendAsterisk(obj, name) {
 function mark({ sourceObj, lineNo }) {
   if (lineNo !== null)
     traverse(sourceObj)
-      .update((o, name) => { appendAsterisk(o, name) })
-      .byLineNo(lineNo);
+      .toLineNo(lineNo)
+      .then((o, name) => { appendAsterisk(o, name) });
   return sourceObj;
 }
 

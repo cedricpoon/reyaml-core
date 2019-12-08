@@ -8,7 +8,7 @@ const getTruncatedD3 = attribute => ({
       width: 15,
       height: 15,
       x: -10,
-      y: -10,
+      y: -5,
       stroke: 'grey',
       fill: 'yellow',
     }
@@ -39,11 +39,11 @@ const config = {
     },
     truncatedDown: {
       name: 'truncatedDown',
-      d3: getTruncatedD3('↓↓↓↓↓'),
+      d3: getTruncatedD3('⬇'),
     },
     truncatedUp: {
       name: 'truncatedUp',
-      d3: getTruncatedD3('↑↑↑↑↑'),
+      d3: getTruncatedD3('⬆'),
     }
   }
 };

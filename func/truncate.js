@@ -20,35 +20,46 @@ function findParent({ sourceObj, obj, level }) {
   for (i = 0; i < level; i++) {
     let topMost = true;
     traverse(sourceObj)
-      .update((o, name) => { topMost = false; obj = o; if (Array.isArray(obj)) i--; })
-      .byObject(obj);
+      .toObject(obj)
+      .then((o, name) => { topMost = false; obj = o; if (Array.isArray(obj)) i--; });
     if (topMost) return { parent: obj, i: level - i };
   }
   return { parent: obj, i: 0 };
 }
 
+function vertically(level, sourceObj, o) {
+  let { parent, i } = findParent({  // `o` as parent
+    sourceObj,
+    obj: o,
+    level: o.hasOwnProperty(marker.name) ? level + 1 : level
+  });
+  if (sourceObj !== parent && Object.keys(parent).length > 1) { // case of uplifted dummy parent
+    const x = {};
+    x[marker.name] = markerMap.truncatedUp.name;
+    x[marker.content] = { ...parent };
+    parent = x;
+    i--;  // compensate an extra level created by truncatedUp
+  } else if (sourceObj === parent && Array.isArray(parent)) {  // case of origin array dummy parent
+    i--;
+  }
+  sourceObj = parent;
+  truncChildren({ sourceObj, level: level * 2 - i }); // `o` as parent
+  return sourceObj;
+}
+
+function horizontally(sourceObj, o) {
+
+  return sourceObj;
+}
+
 function truncate({ sourceObj, level, lineNo }) {
   if (level !== null)
     traverse(sourceObj)
-      .update((o, name) => {
-        let { parent, i } = findParent({  // `o` as parent
-          sourceObj,
-          obj: o,
-          level: o.hasOwnProperty(marker.name) ? level + 1 : level
-        });
-        if (sourceObj !== parent && Object.keys(parent).length > 1) { // case of uplifted dummy parent
-          const x = {};
-          x[marker.name] = markerMap.truncatedUp.name;
-          x[marker.content] = { ...parent };
-          parent = x;
-          i--;  // compensate an extra level created by truncatedUp
-        } else if (sourceObj === parent && Array.isArray(parent)) {  // case of origin array dummy parent
-          i--;
-        }
-        sourceObj = parent;
-        truncChildren({ sourceObj, level: level * 2 - i }); // `o` as parent
-      })
-      .byLineNo(lineNo);
+      .toLineNo(lineNo)
+      .then((o, name) => {
+        sourceObj = vertically(level, sourceObj, o);  // apply leveling rule
+        sourceObj = horizontally(sourceObj, o);       // apply sibling rule on leveled tree
+      });
   return sourceObj;
 }
 
