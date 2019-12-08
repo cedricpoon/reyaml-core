@@ -27,7 +27,7 @@ function findParent({ sourceObj, obj, level }) {
   return { parent: obj, i: 0 };
 }
 
-function vertically(level, sourceObj, o) {
+function vertically({ level, sourceObj, o }) {
   let { parent, i } = findParent({  // `o` as parent
     sourceObj,
     obj: o,
@@ -47,8 +47,30 @@ function vertically(level, sourceObj, o) {
   return sourceObj;
 }
 
-function horizontally(sourceObj, o) {
+function truncSiblings({ o, name, siblingSize }) {
+  const names = Object.keys(o);
+  const index = names.findIndex(x => x === name);
+  for (let i = 0; i < index - siblingSize; i++)
+    delete o[names[i]];
+  for (let i = names.length - 1; i > index + siblingSize; i--)
+    delete o[names[i]];
+}
 
+function horizontally({ siblingSize, sourceObj, targetObj }) {
+  traverse(sourceObj)
+    .toObject(targetObj)
+    .then((o, name) => {
+      if (o.hasOwnProperty(marker.name))  // if marked backtrack 1 level
+        traverse(sourceObj)
+          .toObject(o)
+          .then(o2 => { o = o2 });
+      truncSiblings({ o, name, siblingSize });
+    })
+    .eachInodesWithObject(targetObj)
+    .then((o, name) => {
+      if (!o.hasOwnProperty(marker.name))
+        truncSiblings({ o, name, siblingSize });
+    });
   return sourceObj;
 }
 
@@ -57,8 +79,8 @@ function truncate({ sourceObj, level, lineNo }) {
     traverse(sourceObj)
       .toLineNo(lineNo)
       .then((o, name) => {
-        sourceObj = vertically(level, sourceObj, o);  // apply leveling rule
-        sourceObj = horizontally(sourceObj, o);       // apply sibling rule on leveled tree
+        sourceObj = vertically({ level, sourceObj, o });  // apply leveling rule
+        //sourceObj = horizontally({ siblingSize: 0, sourceObj, targetObj: o[name] }); // apply sibling rule on leveled tree
       });
   return sourceObj;
 }

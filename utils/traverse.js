@@ -11,6 +11,28 @@ class Traverse {
     this._run = () => {};
   }
 
+  eachInodesWithObject(obj) {  // breadth-wise
+    this._run = (callback) => {
+      const _tr = ({ sourceObj }) => {
+        if (sourceObj) {
+          const keys = Object.keys(sourceObj);
+          keys.forEach((name, i) => {
+            if (typeof sourceObj[name] === 'object') {
+              traverse([sourceObj[name]]) // if obj in sourceObj[name]
+                .toObject(obj)
+                .then(() => {
+                  callback(sourceObj, name);
+                  _tr({ sourceObj: sourceObj[name] });
+                });
+            }
+          });
+        }
+      };
+      _tr({ sourceObj: this._source });
+    };
+    return this;
+  }
+
   toLineNo(lineNo) {
     this._run = (callback) => {
       const _tr = ({ sourceObj, lineNo, index }) => {
