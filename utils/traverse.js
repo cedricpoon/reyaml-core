@@ -11,24 +11,31 @@ class Traverse {
     this._run = () => {};
   }
 
-  eachInodesWithObject(obj) {  // breadth-wise
+  eachInodesWithObject(obj) {
     this._run = callback => {
-      const _tr = ({ sourceObj }) => {
+      const _stk = [];
+      const _tr = (sourceObj) => {
         if (sourceObj) {
           const keys = Object.keys(sourceObj);
-          keys.forEach((name, i) => {
+          return keys.reduce((isObjChild, name, i) => {
             if (typeof sourceObj[name] === 'object') {
-              traverse([sourceObj[name]]) // if obj in sourceObj[name]
-                .toObject(obj)
-                .then(() => {
-                  callback(sourceObj, name, this);
-                  _tr({ sourceObj: sourceObj[name] });
-                });
+              const r = _tr(sourceObj[name]);
+              if (r) _stk.push(name);
+              return r || isObjChild;
+            } else {
+              return obj === sourceObj || isObjChild;
             }
-          });
+          }, false);
         }
       };
-      _tr({ sourceObj: this._source });
+      _tr(this._source);
+      const _walk = (sourceObj) => {
+        if (_stk.length > 0) {
+          callback(sourceObj, _stk[_stk.length - 1], this);
+          _walk(sourceObj[_stk.pop()]);
+        }
+      };
+      _walk(this._source);
     };
     return this;
   }
