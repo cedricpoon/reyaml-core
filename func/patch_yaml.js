@@ -2,13 +2,13 @@ const { blockScalar4Traverse, literalBlockScalar, literalBlockChoppingScalar, ta
 
 const { is_parser_ignorable } = require('./count_junk_line');
 
-const getKey = ln => { const a = ln.match(/^\s*-?\s*([^\s]+|\".*\"|\'.*\')\s*:/); return a ? a[0] : null };
+const getKey = ln => { const a = ln.match(/^[\s-]*[^\s:]+[^:]*:/); return a ? a[0] : null };
 
 const startWithKey = ln => getKey(ln) !== null;
 
 const endWithScalar = ln => ln.match(/:\s+[\|>][\+\-]\s*$/) !== null;
 
-const getValue = ln => { const a = ln.match(/(?<=:\s+)[^\s]+.*/); return a ? a[0] : null };
+const getValue = ln => { const a = ln.match(/(:\s+)([^\s]+.*)/); return a && a.length === 3 ? a[2] : null };
 
 const hasNoValue = ln => ln.match(/:\s*$/) !== null;
 
@@ -58,7 +58,7 @@ const traverseNode = (yamlString, callback) => _trLn(yamlString, callback).resul
 function wrapKeyPair(yamlString) {
   return traverseNode(yamlString, (prev, curr, next) => {
     if (isKeyPair(curr))
-      return  `${getKey(curr)} ${literalBlockChoppingScalar}\n` + ' '.repeat(countIndentWithHyphen(curr) + tabSize) + getValue(curr);
+      return `${getKey(curr)} ${literalBlockChoppingScalar}\n` + ' '.repeat(countIndentWithHyphen(curr) + tabSize) + getValue(curr);
     else
       return curr;
   });
