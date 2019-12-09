@@ -58,14 +58,6 @@ function truncSiblings({ o, name, siblingSize }) {
 
 function horizontally({ siblingSize, sourceObj, targetObj }) {
   traverse(sourceObj)
-    .toObject(targetObj)
-    .then((o, name) => {
-      if (o.hasOwnProperty(marker.name))  // if marked backtrack 1 level
-        traverse(sourceObj)
-          .toObject(o)
-          .then(o2 => { o = o2 });
-      truncSiblings({ o, name, siblingSize });
-    })
     .eachInodesWithObject(targetObj)
     .then((o, name) => {
       if (!o.hasOwnProperty(marker.name))
@@ -78,9 +70,14 @@ function truncate({ sourceObj, level, lineNo }) {
   if (level !== null)
     traverse(sourceObj)
       .toLineNo(lineNo)
-      .then((o, name) => {
+      .then((o, name, _self) => {
+        if (name === marker.content || name === marker.name) {
+          const r = _self.toObject(o).result; // if marked backtrack 1 level
+          o = r.o;
+          name = r.name;
+        }
         sourceObj = vertically({ level, sourceObj, o });  // apply leveling rule
-        //sourceObj = horizontally({ siblingSize: 0, sourceObj, targetObj: o[name] }); // apply sibling rule on leveled tree
+        sourceObj = horizontally({ siblingSize: 1, sourceObj, targetObj: o[name] }); // apply sibling rule on leveled tree
       });
   return sourceObj;
 }

@@ -12,7 +12,7 @@ class Traverse {
   }
 
   eachInodesWithObject(obj) {  // breadth-wise
-    this._run = (callback) => {
+    this._run = callback => {
       const _tr = ({ sourceObj }) => {
         if (sourceObj) {
           const keys = Object.keys(sourceObj);
@@ -21,7 +21,7 @@ class Traverse {
               traverse([sourceObj[name]]) // if obj in sourceObj[name]
                 .toObject(obj)
                 .then(() => {
-                  callback(sourceObj, name);
+                  callback(sourceObj, name, this);
                   _tr({ sourceObj: sourceObj[name] });
                 });
             }
@@ -34,7 +34,7 @@ class Traverse {
   }
 
   toLineNo(lineNo) {
-    this._run = (callback) => {
+    this._run = callback => {
       const _tr = ({ sourceObj, lineNo, index }) => {
         if (sourceObj) {
           const keys = Object.keys(sourceObj);
@@ -44,16 +44,15 @@ class Traverse {
             if (!Array.isArray(sourceObj) || typeof sourceObj[name] !== 'object') {
               const newLineNo = getNumberOfNewLineChar(sourceObj[name]);
               if (newLineNo === 0 && index === lineNo)
-                callback(sourceObj, name);
+                callback(sourceObj, name, this);
               else if (newLineNo > 0) {
                 if (lineNo >= index && lineNo <= index + newLineNo)
-                  callback(sourceObj, name);
+                  callback(sourceObj, name, this);
                 index += newLineNo;
               }
               index++;
-              if (typeof sourceObj[name] === 'object') index = _tr({ sourceObj: sourceObj[name], lineNo, index });
             }
-            else if (typeof sourceObj[name] === 'object') index = _tr({ sourceObj: sourceObj[name], lineNo, index });
+            if (typeof sourceObj[name] === 'object') index = _tr({ sourceObj: sourceObj[name], lineNo, index });
           }
         }
         return index;
@@ -64,11 +63,11 @@ class Traverse {
   }
 
   toObject(obj) {
-    this._run = (callback) => {
+    this._run = callback => {
       const _tr = ({ sourceObj, obj }) => {
         if (sourceObj)
           Object.keys(sourceObj).map(name => {
-            if (obj === sourceObj[name]) callback(sourceObj, name);
+            if (obj === sourceObj[name]) callback(sourceObj, name, this);
             else if (typeof sourceObj[name] === 'object') _tr({ sourceObj: sourceObj[name], obj });
           });
       }
@@ -79,7 +78,13 @@ class Traverse {
 
   then(f) { this._run(f); return this; }
 
-  get result() { return this._source; }
+  get result() {
+    let o = null, name = null;
+    this._run((_o, _name) => { o = _o; name = _name; });
+    return { o, name };
+  }
+
+  get self() { return this._source; }
 }
 
 function traverse(sourceObj) {
