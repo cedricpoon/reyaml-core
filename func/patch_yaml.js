@@ -2,15 +2,15 @@ const { blockScalar4Traverse, literalBlockScalar, literalBlockChoppingScalar, ta
 
 const { is_parser_ignorable } = require('./count_junk_line');
 
-const getKey = ln => ln.match(/^\s*-?\s*([^\s]+|\".*\"|\'.*\')\s*:/g);
+const getKey = ln => { const a = ln.match(/^\s*-?\s*([^\s]+|\".*\"|\'.*\')\s*:/); return a ? a[0] : null };
 
 const startWithKey = ln => getKey(ln) !== null;
 
-const endWithScalar = ln => ln.match(/:\s+[\|>][\+\-]\s*$/g) !== null;
+const endWithScalar = ln => ln.match(/:\s+[\|>][\+\-]\s*$/) !== null;
 
-const getValue = ln => ln.match(/(?<=:\s+)[^\s]+.*/g);
+const getValue = ln => { const a = ln.match(/(?<=:\s+)[^\s]+.*/); return a ? a[0] : null };
 
-const hasNoValue = ln => ln.match(/:\s*$/g) !== null;
+const hasNoValue = ln => ln.match(/:\s*$/) !== null;
 
 const isKeyPair = ln => startWithKey(ln) && !endWithScalar(ln) && getValue(ln) !== null;
 
@@ -18,11 +18,11 @@ const isNode = ln => startWithKey(ln) || isArray(ln);
 
 const isString = ln => !startWithKey(ln) && !isArray(ln);
 
-const isArray = ln => ln.match(/^\s*-\s+[^-\s].*/g) !== null;
+const isArray = ln => ln.match(/^\s*-\s+[^-\s].*/) !== null;
 
-const countIndent = ln => ln.match(/^\s*/g)[0].length;
+const countIndent = ln => ln.match(/^\s*/)[0].length;
 
-const countIndentWithHyphen = ln => ln.match(/^\s*-*\s*/g)[0].length;
+const countIndentWithHyphen = ln => ln.match(/^\s*-*\s*/)[0].length;
 
 const replace = (ln, map) => Object
   .keys(map)

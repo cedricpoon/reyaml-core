@@ -1,8 +1,8 @@
-const isArraySeparator = ln => ln.match(/^\-{3,}/g) !== null;
+const isArraySeparator = ln => ln.match(/^\-{3,}/) !== null;
 
-const isComment = ln => ln.match(/^\s*#+/g) !== null;
+const isComment = ln => ln.match(/^\s*#+/) !== null;
 
-const isWhiteline = ln => ln.match(/^\s*$/g) !== null;
+const isWhiteline = ln => ln.match(/^\s*$/) !== null;
 
 const isJunk = ln => isWhiteline(ln) | isComment(ln) | isArraySeparator(ln);
 

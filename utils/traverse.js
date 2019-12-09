@@ -1,8 +1,9 @@
 function getNumberOfNewLineChar(ln) {
-  let n = 0;
-  try { n = ln.match(/\n/g).length }
-  catch { /* ignored */ }
-  return n;
+  if (typeof ln === 'string') {
+    const r = ln.match(/\n/g);
+    return r ? r.length : 0;
+  }
+  return 0;
 }
 
 class Traverse {
