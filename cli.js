@@ -1,3 +1,4 @@
+/* eslint-env node */
 const jsYaml = require('js-yaml');
 const rc = require('./index');
 const { readFile, writeFile } = require('./utils/file_io');

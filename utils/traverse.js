@@ -6,10 +6,37 @@ function getNumberOfNewLineChar(ln) {
   return 0;
 }
 
+function traverse(sourceObj) {  // instantiation shorthand
+  return sourceObj ? new Traverse(sourceObj) : Traverse;
+}
+
 class Traverse {
+  /* Traverse Enums */
+  static get from() { return { LEFT_TO_RIGHT: 0, RIGHT_TO_LEFT: 1 } }
+
   constructor(sourceObj) {
     this._source = sourceObj;
     this._run = () => {};
+  }
+
+  eachInodes(dir, nextLevelHandler) {  // breadth-wise
+    this._run = callback => {
+      const _tr = sourceObj => {
+        if (sourceObj) {
+          nextLevelHandler();
+          const keys = Object.keys(sourceObj);
+          if (dir === Traverse.from.RIGHT_TO_LEFT)
+            keys.reverse();
+          keys.forEach((name, i) => {
+            callback(sourceObj, name, this);
+            if (typeof sourceObj[name] === 'object')
+              _tr(sourceObj[name]);
+          });
+        }
+      }
+      _tr(this._source);
+    };
+    return this;
   }
 
   eachInodesWithObject(obj) {
@@ -93,10 +120,6 @@ class Traverse {
   }
 
   get self() { return this._source; }
-}
-
-function traverse(sourceObj) {
-  return new Traverse(sourceObj);
 }
 
 module.exports = traverse;

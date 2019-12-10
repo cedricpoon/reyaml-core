@@ -1,11 +1,14 @@
 const traverse = require('../utils/traverse');
+const Traverse = traverse();  // get class
 const { marker, markerMap } = require('../config');
 
 function truncChildren({ sourceObj, level }) {
   const _trunc = (o, lv) => Object.keys(o).map(name => {
     if (o[name]) {
       if (typeof o[name] === 'object' && lv > 0)
-        _trunc(o[name], lv - (Array.isArray(o[name]) || o[name].hasOwnProperty(marker.name) ? 0 : 1));
+        _trunc(o[name],
+          lv - (Array.isArray(o[name]) || Object.prototype.hasOwnProperty.call(o[name], marker.name) ? 0 : 1)
+        );
       else if (typeof o[name] === 'object') {
         o[name] = {};
         o[name][marker.name] = markerMap.truncatedDown.name;
@@ -16,7 +19,7 @@ function truncChildren({ sourceObj, level }) {
 }
 
 function findParent({ sourceObj, obj, level }) {
-  for (i = 0; i < level; i++) {
+  for (let i = 0; i < level; i++) {
     let topMost = true;
     traverse(sourceObj)
       .toObject(obj)
@@ -30,7 +33,7 @@ function vertically({ level, sourceObj, o }) {
   let { parent, i } = findParent({  // `o` as parent
     sourceObj,
     obj: o,
-    level: o.hasOwnProperty(marker.name) ? level + 1 : level
+    level: Object.prototype.hasOwnProperty.call(o, marker.name) ? level + 1 : level
   });
   if (sourceObj !== parent && Object.keys(parent).length > 1) { // case of uplifted dummy parent
     const x = {};
@@ -48,18 +51,35 @@ function vertically({ level, sourceObj, o }) {
 
 function truncSiblings({ o, name, siblingSize }) {
   const names = Object.keys(o);
-  const index = names.findIndex(x => x === name);
-  for (let i = 0; i < index - siblingSize; i++)
+  const pivot = names.findIndex(x => x === name);
+  let retainSize = 0;
+  const resetRetain = () => { retainSize = 0; };
+
+  for (let i = 0; i < pivot - siblingSize; i++) // handle excessive LHS
     delete o[names[i]];
-  for (let i = names.length - 1; i > index + siblingSize; i--)
+  for (let i = pivot - siblingSize; i < pivot; i++) // handle remaining LHS
+    traverse(o[names[i]])
+      .eachInodes(Traverse.from.RIGHT_TO_LEFT, resetRetain)
+      .then((o2, name2) => {
+        if (retainSize++ >= siblingSize)
+          delete o2[name2];
+      });
+  for (let i = names.length - 1; i > pivot + siblingSize; i--) // handle excessive RHS
     delete o[names[i]];
+  for (let i = pivot + siblingSize; i > pivot; i--) // handle remaining RHS
+    traverse(o[names[i]])
+      .eachInodes(Traverse.from.LEFT_TO_RIGHT, resetRetain)
+      .then((o2, name2) => {
+        if (retainSize++ >= siblingSize)
+          delete o2[name2];
+      });
 }
 
 function horizontally({ siblingSize, sourceObj, targetObj }) {
   traverse(sourceObj)
     .eachInodesWithObject(targetObj)
     .then((o, name) => {
-      if (!o.hasOwnProperty(marker.name))
+      if (!Object.prototype.hasOwnProperty.call(o, marker.name))
         truncSiblings({ o, name, siblingSize });
     });
   return sourceObj;

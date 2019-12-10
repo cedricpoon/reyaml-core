@@ -6,7 +6,7 @@ const getKey = ln => { const a = ln.match(/[^:]*:/); return a ? a[0] : null };
 
 const startWithKey = ln => getKey(ln) !== null;
 
-const endWithScalar = ln => ln.match(/:\s+[\|>][\+\-]\s*$/) !== null;
+const endWithScalar = ln => ln.match(/:\s+[|>][+-]\s*$/) !== null;
 
 const getValue = ln => { const a = ln.match(/(:\s+)([^\s]+.*)/); return a && a.length === 3 ? a[2] : null };
 

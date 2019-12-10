@@ -3,8 +3,8 @@ const { marker, markerMap, rootName, maxStringLength } = require('../config');
 const limitString = (ln, n) => (ln.length > n) ? ln.substr(0, n-1) + '...' : ln;
 
 function transform_mark({ sourceObj, key }) {
-  if (sourceObj[key] && sourceObj[key].hasOwnProperty(marker.name)) {
-    if (sourceObj[key].hasOwnProperty(marker.content))
+  if (sourceObj[key] && Object.prototype.hasOwnProperty.call(sourceObj[key], marker.name)) {
+    if (Object.prototype.hasOwnProperty.call(sourceObj[key], marker.content))
       return { marked: true, type: sourceObj[key][marker.name], pureContent: sourceObj[key][marker.content] };
     else
       return { marked: true, type: sourceObj[key][marker.name], pureContent: null };
@@ -64,7 +64,7 @@ function transform_d3_from_object({ sourceObj }) {
         });
     } else {
       sourceObj.forEach((o, key) => {
-        if (typeof o === 'object' && o && !o.hasOwnProperty(marker.name)) {
+        if (typeof o === 'object' && o && !Object.prototype.hasOwnProperty.call(o, marker.name)) {
           const r = transform_d3_from_object({ sourceObj: o });
           a.push.apply(a, r);
         } else {

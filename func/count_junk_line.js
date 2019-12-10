@@ -1,4 +1,4 @@
-const isArraySeparator = ln => ln.match(/^\-{3,}/) !== null;
+const isArraySeparator = ln => ln.match(/^-{3,}/) !== null;
 
 const isComment = ln => ln.match(/^\s*#+/) !== null;
 
