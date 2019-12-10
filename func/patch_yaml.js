@@ -2,7 +2,7 @@ const { blockScalar4Traverse, literalBlockScalar, literalBlockChoppingScalar, ta
 
 const { is_parser_ignorable } = require('./count_junk_line');
 
-const getKey = ln => { const a = ln.match(/^[\s-]*[^\s:]+[^:]*:/); return a ? a[0] : null };
+const getKey = ln => { const a = ln.match(/[^:]*:/); return a ? a[0] : null };
 
 const startWithKey = ln => getKey(ln) !== null;
 
