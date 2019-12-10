@@ -57,16 +57,19 @@ function truncSiblings({ o, name, siblingSize }) {
 
   for (let i = 0; i < pivot - siblingSize; i++) // handle excessive LHS
     delete o[names[i]];
-  for (let i = pivot - siblingSize; i < pivot; i++) // handle remaining LHS
+
+  for (let i = pivot - siblingSize > 0 ? pivot - siblingSize : 0; i < pivot; i++) // handle remaining LHS
     traverse(o[names[i]])
       .eachInodes(Traverse.from.RIGHT_TO_LEFT, resetRetain)
       .then((o2, name2) => {
         if (retainSize++ >= siblingSize)
           delete o2[name2];
       });
+
   for (let i = names.length - 1; i > pivot + siblingSize; i--) // handle excessive RHS
     delete o[names[i]];
-  for (let i = pivot + siblingSize; i > pivot; i--) // handle remaining RHS
+
+  for (let i = pivot + siblingSize < names.length ? pivot + siblingSize : names.length - 1; i > pivot; i--) // handle remaining RHS
     traverse(o[names[i]])
       .eachInodes(Traverse.from.LEFT_TO_RIGHT, resetRetain)
       .then((o2, name2) => {
@@ -96,7 +99,7 @@ function truncate({ sourceObj, level, lineNo }) {
           name = r.name;
         }
         sourceObj = vertically({ level, sourceObj, o });  // apply leveling rule
-        sourceObj = horizontally({ siblingSize: 0, sourceObj, targetObj: o[name] }); // apply sibling rule on leveled tree
+        sourceObj = horizontally({ siblingSize: 1, sourceObj, targetObj: o[name] }); // apply sibling rule on leveled tree
       });
   return sourceObj;
 }
