@@ -23,6 +23,7 @@ function findParent({ sourceObj, obj, level }) {
     let topMost = true;
     traverse(sourceObj)
       .toObject(obj)
+      // eslint-disable-next-line no-unused-vars
       .then((o, name) => { topMost = false; obj = o; if (Array.isArray(obj)) i--; });
     if (topMost) return { parent: obj, i: level - i };
   }
@@ -101,7 +102,7 @@ function truncate({ sourceObj, level, lineNo }) {
           name = r.name;
         }
         sourceObj = vertically({ level, sourceObj, o });  // apply leveling rule
-        sourceObj = horizontally({ siblingSize: 1, sourceObj, targetObj: o[name] }); // apply sibling rule on leveled tree
+        sourceObj = horizontally({ siblingSize: 2, sourceObj, targetObj: o[name] }); // apply sibling rule on leveled tree
       });
   return sourceObj;
 }

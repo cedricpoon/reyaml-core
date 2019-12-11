@@ -46,7 +46,7 @@ function transform_d3_from_object({ sourceObj }) {
     if (!Array.isArray(sourceObj)) {
       Object
         .entries(sourceObj)
-        .forEach(([key, value]) => {
+        .forEach(([key, value]) => {  // eslint-disable-line no-unused-vars
           const { marked, type, pureContent } = transform_mark({ sourceObj, key });
           if (typeof pureContent === 'object') {
             const o = marked ? { ...markerMap[type].d3 } : {} ;

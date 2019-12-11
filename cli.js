@@ -1,5 +1,4 @@
 /* eslint-env node */
-const jsYaml = require('js-yaml');
 const rc = require('./index');
 const { readFile, writeFile } = require('./utils/file_io');
 
@@ -32,8 +31,6 @@ async function main() {
     const source = await readFile({ path: process.argv[2] });
     // create Ryaml Object
     const ryaml = new rc.Ryaml(source);
-    // Result
-    let jsUpdatedSource;
     // Main options
     switch (process.argv[3]) {
 

@@ -56,7 +56,7 @@ const _trLn = (yStr, f) => yStr
 const traverseNode = (yamlString, callback) => _trLn(yamlString, callback).result;
 
 function wrapKeyPair(yamlString) {
-  return traverseNode(yamlString, (prev, curr, next) => {
+  return traverseNode(yamlString, (prev, curr, next) => { // eslint-disable-line no-unused-vars
     if (isKeyPair(curr))
       return `${getKey(curr)} ${literalBlockChoppingScalar}\n` + ' '.repeat(countIndentWithHyphen(curr) + tabSize) + getValue(curr);
     else
@@ -80,7 +80,7 @@ function removeEmptyLine(yamlString) {
 }
 
 function unifyBlockScalar(yamlString) {
-  return traverseNode(yamlString, (prev, curr, next) => {
+  return traverseNode(yamlString, (prev, curr, next) => { // eslint-disable-line no-unused-vars
     if (startWithKey(curr) || isArray(curr))
       return replace(curr, blockScalar4Traverse);
     return curr;
