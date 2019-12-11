@@ -51,7 +51,7 @@ const config = {
     },
     truncatedRight: {
       name: 'truncatedRight',
-      d3: getTruncatedD3('➡'),
+      d3: getTruncatedD3('⮕'),
     },
   }
 };
