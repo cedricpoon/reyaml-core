@@ -44,7 +44,15 @@ const config = {
     truncatedUp: {
       name: 'truncatedUp',
       d3: getTruncatedD3('⬆'),
-    }
+    },
+    truncatedLeft: {
+      name: 'truncatedLeft',
+      d3: getTruncatedD3('⬅'),
+    },
+    truncatedRight: {
+      name: 'truncatedRight',
+      d3: getTruncatedD3('➡'),
+    },
   }
 };
 
