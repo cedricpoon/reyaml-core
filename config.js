@@ -1,5 +1,3 @@
-const literalBlockScalar = '|+';
-
 const getTruncatedD3 = attribute => ({
   attributes: { '': attribute },
   nodeSvgShape: {
@@ -15,8 +13,11 @@ const getTruncatedD3 = attribute => ({
   },
 });
 
+const literalBlockScalar = '|+';
+
 const config = {
   rootName: '§',
+  keyPostfix: '⏎',
   tabSize: 2,
   literalBlockScalar: literalBlockScalar,
   literalBlockChoppingScalar: '|-',

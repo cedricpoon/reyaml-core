@@ -1,4 +1,4 @@
-const { blockScalar4Traverse, literalBlockScalar, literalBlockChoppingScalar, tabSize } = require('../config');
+const { blockScalar4Traverse, literalBlockScalar, literalBlockChoppingScalar, tabSize, keyPostfix } = require('../config');
 
 const { is_parser_ignorable } = require('./count_junk_line');
 
@@ -55,42 +55,69 @@ const _trLn = (yStr, f) => yStr
 
 const traverseNode = (yamlString, callback) => _trLn(yamlString, callback).result;
 
-function wrapKeyPair(yamlString) {
-  return traverseNode(yamlString, (prev, curr, next) => { // eslint-disable-line no-unused-vars
-    if (isKeyPair(curr))
-      return `${getKey(curr)} ${literalBlockChoppingScalar}\n` + ' '.repeat(countIndentWithHyphen(curr) + tabSize) + getValue(curr);
-    else
+function patch(yamlString) {
+  // Constructor
+  this.yamlString = yamlString;
+
+  /* eslint-disable no-unused-vars */
+  this.wrapKeyPair = () => {
+    return patch(traverseNode(this.yamlString, (prev, curr, next) => {
+      if (isKeyPair(curr))
+        return `${getKey(curr)} ${literalBlockChoppingScalar}\n` + ' '.repeat(countIndentWithHyphen(curr) + tabSize) + getValue(curr);
+      else
+        return curr;
+    }));
+  }
+
+  this.appendBlockScalar = () => {
+    return patch(traverseNode(this.yamlString, (prev, curr, next) => {
+      if (next !== null && startWithKey(curr) && hasNoValue(curr) && !startWithKey(next) && !isArray(next))
+        return `${curr} ${literalBlockScalar}`;
+      else
+        return curr
+    }));
+  }
+
+  this.removeEmptyLine = () => {
+    return patch(
+      this.yamlString
+        .split('\n')
+        .reduce((a, x) => is_parser_ignorable(x) ? a : a += `${x}\n`, '')
+    );
+  }
+
+  this.unifyBlockScalar = () => {
+    return patch(traverseNode(this.yamlString, (prev, curr, next) => {
+      if (startWithKey(curr) || isArray(curr))
+        return replace(curr, blockScalar4Traverse);
       return curr;
-  });
+    }));
+  }
+
+  this.appendKey = () => {
+    return patch(traverseNode(this.yamlString, (prev, curr, next) => {
+      if (startWithKey(curr)) {
+        const _key = getKey(curr);
+        return `${_key.substr(0, _key.lastIndexOf(':'))}${keyPostfix}:`;
+      }
+      else
+        return curr
+    }));
+  }
+
+  this.result = () => this.yamlString;
+  /* eslint-enable no-unused-vars */
+
+  return this;
 }
 
-function appendBlockScalar(yamlString) {
-  return traverseNode(yamlString, (prev, curr, next) => {
-    if (next !== null && startWithKey(curr) && hasNoValue(curr) && !startWithKey(next) && !isArray(next))
-      return `${curr} ${literalBlockScalar}`;
-    else
-      return curr
-  });
-}
-
-function removeEmptyLine(yamlString) {
-  return yamlString
-    .split('\n')
-    .reduce((a, x) => is_parser_ignorable(x) ? a : a += `${x}\n`, '');
-}
-
-function unifyBlockScalar(yamlString) {
-  return traverseNode(yamlString, (prev, curr, next) => { // eslint-disable-line no-unused-vars
-    if (startWithKey(curr) || isArray(curr))
-      return replace(curr, blockScalar4Traverse);
-    return curr;
-  });
-}
-
-function patch({ yamlString }) {
-  let result = appendBlockScalar(wrapKeyPair(unifyBlockScalar(removeEmptyLine(yamlString))));
-  result = result.replace(/\n*$/g, '');
-  return result;
-}
-
-module.exports = { patch_yaml: patch };
+module.exports = {
+  patch_yaml: ({ yamlString }) =>
+    patch(yamlString)
+      .removeEmptyLine()
+      .unifyBlockScalar()
+      .wrapKeyPair()
+      .appendBlockScalar()
+      .appendKey()
+      .result()
+};
