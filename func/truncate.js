@@ -110,7 +110,7 @@ function truncate({ sourceObj, level, lineNo }) {
           name = r.name;
         }
         sourceObj = vertically({ level, sourceObj, o });  // apply leveling rule
-        sourceObj = horizontally({ siblingSize: 1, sourceObj, targetObj: o[name] }); // apply sibling rule on leveled tree
+        sourceObj = horizontally({ siblingSize: 2, sourceObj, targetObj: o[name] }); // apply sibling rule on leveled tree
       });
   return sourceObj;
 }

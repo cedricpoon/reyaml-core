@@ -22,6 +22,7 @@ class Traverse {
   eachInodes(dir = Traverse.from.LEFT_TO_RIGHT, nextLevelHandler = () => {}) {  // breadth-wise
     this._run = callback => {
       const _tr = sourceObj => {
+        const queue = [];
         if (sourceObj) {
           const keys = Object.keys(sourceObj);
           if (dir === Traverse.from.RIGHT_TO_LEFT)
@@ -29,9 +30,10 @@ class Traverse {
           keys.forEach((name) => {
             callback(sourceObj, name, this);
             if (typeof sourceObj[name] === 'object')
-              _tr(sourceObj[name]);
+              queue.push(sourceObj[name]);
           });
-          nextLevelHandler(sourceObj, this);
+          nextLevelHandler(sourceObj, this);  // end of this level as keys.forEach done
+          queue.forEach(o => { _tr(o) });
         }
       }
       _tr(this._source);
