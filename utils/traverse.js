@@ -23,7 +23,6 @@ class Traverse {
     this._run = callback => {
       const _tr = sourceObj => {
         if (sourceObj) {
-          nextLevelHandler();
           const keys = Object.keys(sourceObj);
           if (dir === Traverse.from.RIGHT_TO_LEFT)
             keys.reverse();
@@ -32,6 +31,7 @@ class Traverse {
             if (typeof sourceObj[name] === 'object')
               _tr(sourceObj[name]);
           });
+          nextLevelHandler(sourceObj, this);
         }
       }
       _tr(this._source);

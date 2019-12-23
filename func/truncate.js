@@ -1,6 +1,7 @@
 const traverse = require('../utils/traverse');
+const modify = require('../utils/modify');
 const Traverse = traverse();  // get class
-const { marker, markerMap } = require('../config');
+const { marker, markerMap, section } = require('../config');
 
 function truncChildren({ sourceObj, level }) {
   const _trunc = (o, lv) => Object.keys(o).map(name => {
@@ -54,15 +55,18 @@ function truncSiblings({ o, name, siblingSize }) {
   const names = Object.keys(o);
   const pivot = names.findIndex(x => x === name);
   let retainSize = 0;
-  const resetRetain = () => { retainSize = 0; };
 
   for (let i = 0; i < pivot - siblingSize; i++) // handle excessive LHS
     delete o[names[i]];
+  //modify(o).prepend({ [`<${section}`]: { [marker.name]: markerMap.truncatedLeft.name } }); // left arrow
 
   for (let i = pivot - siblingSize > 0 ? pivot - siblingSize : 0; i < pivot; i++) // handle remaining LHS
     if (o[names[i]])
       traverse(o[names[i]])
-        .eachInodes(Traverse.from.RIGHT_TO_LEFT, resetRetain)
+        .eachInodes(Traverse.from.RIGHT_TO_LEFT, o2 => {
+          retainSize = 0; // reset retainment
+          //modify(o2).prepend({ [`<${section}`]: { [marker.name]: markerMap.truncatedLeft.name } }); // left arrow
+        })
         .then((o2, name2) => {
           if (retainSize++ >= siblingSize)
             delete o2[name2];
@@ -70,11 +74,15 @@ function truncSiblings({ o, name, siblingSize }) {
 
   for (let i = names.length - 1; i > pivot + siblingSize; i--) // handle excessive RHS
     delete o[names[i]];
+  //modify(o).append({ [`${section}>`]: { [marker.name]: markerMap.truncatedRight.name } }); // right arrow
 
   for (let i = pivot + siblingSize < names.length ? pivot + siblingSize : names.length - 1; i > pivot; i--) // handle remaining RHS
     if (o[names[i]])
       traverse(o[names[i]])
-        .eachInodes(Traverse.from.LEFT_TO_RIGHT, resetRetain)
+        .eachInodes(Traverse.from.LEFT_TO_RIGHT, o2 => {
+          retainSize = 0; // reset retainment
+          //modify(o2).append({ [`${section}>`]: { [marker.name]: markerMap.truncatedRight.name } }); // right arrow
+        })
         .then((o2, name2) => {
           if (retainSize++ >= siblingSize)
             delete o2[name2];
@@ -102,7 +110,7 @@ function truncate({ sourceObj, level, lineNo }) {
           name = r.name;
         }
         sourceObj = vertically({ level, sourceObj, o });  // apply leveling rule
-        sourceObj = horizontally({ siblingSize: 2, sourceObj, targetObj: o[name] }); // apply sibling rule on leveled tree
+        sourceObj = horizontally({ siblingSize: 1, sourceObj, targetObj: o[name] }); // apply sibling rule on leveled tree
       });
   return sourceObj;
 }

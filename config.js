@@ -13,15 +13,18 @@ const getTruncatedD3 = attribute => ({
   },
 });
 
-const literalBlockScalar = '|+';
-
+const lbs = '|+';
 const config = {
-  rootName: '§',
+  section: '§',
   keyPostfix: '⏎',
   tabSize: 2,
-  literalBlockScalar: literalBlockScalar,
+  literalBlockScalar: lbs,
   literalBlockChoppingScalar: '|-',
-  blockScalar4Traverse: { '\\|\\-': literalBlockScalar, '>\\-': literalBlockScalar, '>\\+': literalBlockScalar },
+  blockScalar4Traverse: {
+    '\\|\\-': lbs,
+    '>\\-': lbs,
+    '>\\+': lbs
+  },
   maxStringLength: 15,
   marker: { name: '*', content: '**' },
   markerMap: {

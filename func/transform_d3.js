@@ -1,4 +1,4 @@
-const { marker, markerMap, rootName, maxStringLength } = require('../config');
+const { marker, markerMap, section, maxStringLength } = require('../config');
 
 const limitString = (ln, n) => (ln.length > n) ? ln.substr(0, n-1) + '...' : ln;
 
@@ -15,7 +15,7 @@ function transform_mark({ sourceObj, key }) {
 
 function transform_d3_master({ sourceObj }) {
   if (Array.isArray(sourceObj))
-    return transform_d3_from_array({ sourceObj, rootName });
+    return transform_d3_from_array({ sourceObj, section });
   else if (sourceObj != null && Object.keys(sourceObj).length > 1)
     return transform_d3_from_multi_key_object({ sourceObj });
   else
@@ -24,11 +24,11 @@ function transform_d3_master({ sourceObj }) {
 
 function transform_d3_from_multi_key_object({ sourceObj }) {
   const o = {};
-  o[rootName] = sourceObj;
+  o[section] = sourceObj;
   return transform_d3_from_object({ sourceObj: o });
 }
 
-function transform_d3_from_array({ sourceObj, rootName }) {
+function transform_d3_from_array({ sourceObj, section }) {
   const a = [];
   sourceObj.filter(o => o != null).forEach((obj, i) => {
     const o = {};
@@ -37,7 +37,7 @@ function transform_d3_from_array({ sourceObj, rootName }) {
     o.children = r;
     a.push(o);
   });
-  return [{ name: rootName, children: a }];
+  return [{ name: section, children: a }];
 }
 
 function transform_d3_from_object({ sourceObj }) {
