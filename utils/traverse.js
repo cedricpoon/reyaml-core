@@ -19,8 +19,8 @@ class Traverse {
     this._run = () => {};
   }
 
-  eachInodes(dir = Traverse.from.LEFT_TO_RIGHT, nextLevelHandler = () => {}) {  // breadth-wise
-    this._run = callback => {
+  eachInodes(dir = Traverse.from.LEFT_TO_RIGHT) {  // breadth-wise
+    this._run = (callback, nextLevelHandler) => {
       const _tr = sourceObj => {
         const queue = [];
         if (sourceObj) {
@@ -36,9 +36,10 @@ class Traverse {
           queue.forEach(o => { _tr(o) });
         }
       }
-      _tr(this._source);
+      if (typeof this._source === 'object')
+        _tr(this._source);
     };
-    return this;
+    return new TraverseEachInodes(this._source, this._run);
   }
 
   eachInodesWithObject(obj) {
@@ -122,6 +123,21 @@ class Traverse {
   }
 
   get self() { return this._source; }
+}
+
+class TraverseEachInodes extends Traverse {
+  constructor(sourceObj, run) {
+    super(sourceObj);
+    super._run = run;
+    this._nextLevel = () => {};
+  }
+
+  forNextLevel(f) {
+    this._nextLevel = f;
+    return this;
+  }
+
+  then(f) { this._run(f, this._nextLevel); return this; }
 }
 
 module.exports = traverse;

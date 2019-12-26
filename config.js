@@ -1,4 +1,4 @@
-const getTruncatedD3 = attribute => ({
+const getTruncatedD3 = (attribute, fillColor) => ({
   attributes: { '': attribute },
   nodeSvgShape: {
     shape: 'rect',
@@ -8,7 +8,7 @@ const getTruncatedD3 = attribute => ({
       x: -10,
       y: -5,
       stroke: 'grey',
-      fill: 'yellow',
+      fill: fillColor,
     }
   },
 });
@@ -43,19 +43,19 @@ const config = {
     },
     truncatedDown: {
       name: 'truncatedDown',
-      d3: getTruncatedD3('⬇'),
+      d3: getTruncatedD3('⬇', 'yellow'),
     },
     truncatedUp: {
       name: 'truncatedUp',
-      d3: getTruncatedD3('⬆'),
+      d3: getTruncatedD3('⬆', 'yellow'),
     },
     truncatedLeft: {
       name: 'truncatedLeft',
-      d3: getTruncatedD3('⬅'),
+      d3: getTruncatedD3('⬅', 'pink'),
     },
     truncatedRight: {
       name: 'truncatedRight',
-      d3: getTruncatedD3('⮕'),
+      d3: getTruncatedD3('⮕', 'pink'),
     },
   }
 };

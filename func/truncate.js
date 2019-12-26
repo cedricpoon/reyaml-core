@@ -51,42 +51,78 @@ function vertically({ level, sourceObj, o }) {
   return sourceObj;
 }
 
-function truncSiblings({ o, name, siblingSize }) {
-  const names = Object.keys(o);
-  const pivot = names.findIndex(x => x === name);
-  let retainSize = 0;
-
-  for (let i = 0; i < pivot - siblingSize; i++) // handle excessive LHS
+function trimLHS({ o, names, siblingSize, pivot }) {
+  let flg = false;
+  for (let i = 0; i < pivot - siblingSize; i++) { // handle excessive LHS
     delete o[names[i]];
-  //modify(o).prepend({ [`<${section}`]: { [marker.name]: markerMap.truncatedLeft.name } }); // left arrow
+    flg = true;
+  }
+  if (flg)
+    modify(o).prepend({ [`${section}`]: { [marker.name]: markerMap.truncatedLeft.name } }); // left arrow
+}
+
+function trimChildrenFromLHS({ o, names, siblingSize, pivot }) {
+  let retainSize = 0;
+  let flg = false;
 
   for (let i = pivot - siblingSize > 0 ? pivot - siblingSize : 0; i < pivot; i++) // handle remaining LHS
     if (o[names[i]])
       traverse(o[names[i]])
-        .eachInodes(Traverse.from.RIGHT_TO_LEFT, o2 => {
-          retainSize = 0; // reset retainment
-          //modify(o2).prepend({ [`<${section}`]: { [marker.name]: markerMap.truncatedLeft.name } }); // left arrow
+        .eachInodes(Traverse.from.RIGHT_TO_LEFT)
+        .forNextLevel(o2 => {
+          retainSize = 0; //reset retainment
+          // left arrow
+          if (flg) modify(o2).prepend({ [`${section}`]: { [marker.name]: markerMap.truncatedLeft.name } });
+          flg = false; // reset flag
         })
         .then((o2, name2) => {
-          if (retainSize++ >= siblingSize)
+          if (retainSize++ >= siblingSize) {
             delete o2[name2];
+            flg = true;
+          }
         });
+}
 
-  for (let i = names.length - 1; i > pivot + siblingSize; i--) // handle excessive RHS
+function trimRHS({ o, names, siblingSize, pivot }) {
+  let flg = false;
+  for (let i = names.length - 1; i > pivot + siblingSize; i--) { // handle excessive RHS
     delete o[names[i]];
-  //modify(o).append({ [`${section}>`]: { [marker.name]: markerMap.truncatedRight.name } }); // right arrow
+    flg = true;
+  }
+  if (flg)
+    modify(o).append({ [`${section}`]: { [marker.name]: markerMap.truncatedRight.name } }); // right arrow
+}
+
+function trimChildrenFromRHS({ o, names, siblingSize, pivot }) {
+  let retainSize = 0;
+  let flg = false;
 
   for (let i = pivot + siblingSize < names.length ? pivot + siblingSize : names.length - 1; i > pivot; i--) // handle remaining RHS
     if (o[names[i]])
       traverse(o[names[i]])
-        .eachInodes(Traverse.from.LEFT_TO_RIGHT, o2 => {
-          retainSize = 0; // reset retainment
-          //modify(o2).append({ [`${section}>`]: { [marker.name]: markerMap.truncatedRight.name } }); // right arrow
+        .eachInodes(Traverse.from.LEFT_TO_RIGHT)
+        .forNextLevel(o2 => {
+          retainSize = 0; //reset retainment
+          // right arrow
+          if (flg) modify(o2).append({ [`${section}`]: { [marker.name]: markerMap.truncatedRight.name } });
+          flg = false; // reset flag
         })
         .then((o2, name2) => {
-          if (retainSize++ >= siblingSize)
+          if (retainSize++ >= siblingSize) {
             delete o2[name2];
+            flg = true;
+          }
         });
+}
+
+function truncSiblings({ o, name, siblingSize }) {
+  const names = Object.keys(o);
+  const pivot = names.findIndex(x => x === name);
+
+  trimLHS({ o, names, siblingSize, pivot });
+  trimChildrenFromLHS({ o, names, siblingSize, pivot });
+  trimRHS({ o, names, siblingSize, pivot });
+  trimChildrenFromRHS({ o, names, siblingSize, pivot });
 }
 
 function horizontally({ siblingSize, sourceObj, targetObj }) {
