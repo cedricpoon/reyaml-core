@@ -1,7 +1,7 @@
 const traverse = require('../utils/traverse');
 const modify = require('../utils/modify');
 const Traverse = traverse();  // get class
-const { marker, markerMap, section } = require('../config');
+const { marker, markerMap, sectionLeft, sectionRight } = require('../config');
 
 function truncChildren({ sourceObj, level }) {
   const _trunc = (o, lv) => Object.keys(o).map(name => {
@@ -58,7 +58,7 @@ function trimLHS({ o, names, siblingSize, pivot }) {
     flg = true;
   }
   if (flg && !Array.isArray(o))
-    modify(o).prepend({ [`${section}`]: { [marker.name]: markerMap.truncatedLeft.name } }); // left arrow
+    modify(o).prepend({ [`${sectionLeft}`]: { [marker.name]: markerMap.truncatedLeft.name } }); // left arrow
 }
 
 function trimChildrenFromLHS({ o, names, siblingSize, pivot }) {
@@ -73,7 +73,7 @@ function trimChildrenFromLHS({ o, names, siblingSize, pivot }) {
           retainSize = 0; //reset retainment
           // left arrow
           if (flg && !Array.isArray(o2))
-            modify(o2).prepend({ [`${section}`]: { [marker.name]: markerMap.truncatedLeft.name } });
+            modify(o2).prepend({ [`${sectionLeft}`]: { [marker.name]: markerMap.truncatedLeft.name } });
           flg = false; // reset flag
         })
         .then((o2, name2) => {
@@ -91,7 +91,7 @@ function trimRHS({ o, names, siblingSize, pivot }) {
     flg = true;
   }
   if (flg && !Array.isArray(o))
-    modify(o).append({ [`${section}`]: { [marker.name]: markerMap.truncatedRight.name } }); // right arrow
+    modify(o).append({ [`${sectionRight}`]: { [marker.name]: markerMap.truncatedRight.name } }); // right arrow
 }
 
 function trimChildrenFromRHS({ o, names, siblingSize, pivot }) {
@@ -106,7 +106,7 @@ function trimChildrenFromRHS({ o, names, siblingSize, pivot }) {
           retainSize = 0; //reset retainment
           // right arrow
           if (flg && !Array.isArray(o2))
-            modify(o2).append({ [`${section}`]: { [marker.name]: markerMap.truncatedRight.name } });
+            modify(o2).append({ [`${sectionRight}`]: { [marker.name]: markerMap.truncatedRight.name } });
           flg = false; // reset flag
         })
         .then((o2, name2) => {

@@ -16,6 +16,8 @@ const getTruncatedD3 = (attribute, fillColor) => ({
 const lbs = '|+';
 const config = {
   section: '§',
+  sectionLeft: '(§',
+  sectionRight: '§)',
   keyPostfix: '⏎',
   tabSize: 2,
   literalBlockScalar: lbs,
@@ -43,19 +45,19 @@ const config = {
     },
     truncatedDown: {
       name: 'truncatedDown',
-      d3: getTruncatedD3('⬇', 'yellow'),
+      d3: getTruncatedD3('🡇', 'yellow'),
     },
     truncatedUp: {
       name: 'truncatedUp',
-      d3: getTruncatedD3('⬆', 'yellow'),
+      d3: getTruncatedD3('🡅', 'yellow'),
     },
     truncatedLeft: {
       name: 'truncatedLeft',
-      d3: getTruncatedD3('⬅', 'pink'),
+      d3: getTruncatedD3('🡄', 'yellowgreen'),
     },
     truncatedRight: {
       name: 'truncatedRight',
-      d3: getTruncatedD3('⮕', 'pink'),
+      d3: getTruncatedD3('🡆', 'yellowgreen'),
     },
   }
 };
