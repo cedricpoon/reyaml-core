@@ -30,10 +30,10 @@ class Traverse {
           keys.forEach((name) => {
             callback(sourceObj, name, this);
             if (typeof sourceObj[name] === 'object')
-              queue.push(sourceObj[name]);
+              queue.push({ name, o: sourceObj });
           });
           nextLevelHandler(sourceObj, this);  // end of this level as keys.forEach done
-          queue.forEach(o => { _tr(o) });
+          queue.forEach(({ name: name2, o: o2 }) => { _tr(o2[name2]) });
         }
       }
       if (typeof this._source === 'object')

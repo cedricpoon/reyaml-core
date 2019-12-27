@@ -57,7 +57,7 @@ function trimLHS({ o, names, siblingSize, pivot }) {
     delete o[names[i]];
     flg = true;
   }
-  if (flg)
+  if (flg && !Array.isArray(o))
     modify(o).prepend({ [`${section}`]: { [marker.name]: markerMap.truncatedLeft.name } }); // left arrow
 }
 
@@ -72,7 +72,8 @@ function trimChildrenFromLHS({ o, names, siblingSize, pivot }) {
         .forNextLevel(o2 => {
           retainSize = 0; //reset retainment
           // left arrow
-          if (flg) modify(o2).prepend({ [`${section}`]: { [marker.name]: markerMap.truncatedLeft.name } });
+          if (flg && !Array.isArray(o2))
+            modify(o2).prepend({ [`${section}`]: { [marker.name]: markerMap.truncatedLeft.name } });
           flg = false; // reset flag
         })
         .then((o2, name2) => {
@@ -89,7 +90,7 @@ function trimRHS({ o, names, siblingSize, pivot }) {
     delete o[names[i]];
     flg = true;
   }
-  if (flg)
+  if (flg && !Array.isArray(o))
     modify(o).append({ [`${section}`]: { [marker.name]: markerMap.truncatedRight.name } }); // right arrow
 }
 
@@ -104,7 +105,8 @@ function trimChildrenFromRHS({ o, names, siblingSize, pivot }) {
         .forNextLevel(o2 => {
           retainSize = 0; //reset retainment
           // right arrow
-          if (flg) modify(o2).append({ [`${section}`]: { [marker.name]: markerMap.truncatedRight.name } });
+          if (flg && !Array.isArray(o2))
+            modify(o2).append({ [`${section}`]: { [marker.name]: markerMap.truncatedRight.name } });
           flg = false; // reset flag
         })
         .then((o2, name2) => {
