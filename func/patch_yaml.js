@@ -98,7 +98,12 @@ function patch(yamlString) {
     return patch(traverseNode(this.yamlString, (prev, curr, next) => {
       if (startWithKey(curr)) {
         const _key = getKey(curr);
-        return `${_key.substr(0, _key.lastIndexOf(':'))}${keyPostfix}${curr.substr(_key.lastIndexOf(':'))}`;
+        let separator = ':';
+        if (_key.lastIndexOf('":') !== -1)
+          separator = '":';
+        else if (_key.lastIndexOf('\':') !== -1)
+          separator = '\':';
+        return `${_key.substr(0, _key.lastIndexOf(separator))}${keyPostfix}${curr.substr(_key.lastIndexOf(separator))}`;
       }
       else
         return curr
