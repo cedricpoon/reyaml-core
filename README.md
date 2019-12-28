@@ -1,5 +1,21 @@
 # REyaml-core
  Core & CLI in REyaml for YAML to D3 model transformation
- - [x] Harmonize `truncate()` with `patch_yaml()`
- - [x] `truncChildren()` level raised when `Array.isArray(§) == true`
- - [x] Handle `foo: "bar\nnextline"`
+
+## To-do
+- [ ] npm
+- [ ] cicd
+- [ ] shrink modules and diversify objects
+- [ ] full documentation
+
+## Manual CI Test
+1. Are modules in reyaml-core mutable (i.e. standalone) enough?
+2. Is reyaml-core cli working fine?
+3. Is reyaml-core working fine on reyaml-ui?
+4. Are sample YAML all passed?
+   - Openshift YAML Template
+   - Istio YAML
+   - Arbitrary YAML
+5. Is reyaml-core efficient enough?
+   - Line skipping
+   - Live updating
+   - Character traversing

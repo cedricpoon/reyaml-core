@@ -2,8 +2,9 @@ const jsYaml = require('js-yaml');
 
 function transform_js({ yamlString }) {
   try {
-    const a = jsYaml.safeLoadAll(yamlString);
-    return a.length === 1 ? a[0] : a;
+    let o = jsYaml.safeLoadAll(yamlString);
+    o = o.length === 1 ? o[0] : o;
+    return o;
   } catch (e) {
     return null;
   }

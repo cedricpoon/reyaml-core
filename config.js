@@ -1,50 +1,56 @@
-const literalBlockScalar = '|+';
-
-const getTruncatedD3 = attribute => ({
-  attributes: { '': attribute },
+const patchD3 = ({ attributes, color }) => ({
+  attributes: { ...attributes },
   nodeSvgShape: {
-    shape: 'rect',
     shapeProps: {
-      width: 15,
-      height: 15,
-      x: -10,
-      y: -5,
-      stroke: 'grey',
-      fill: 'yellow',
-    }
+      ...color
+    },
   },
 });
 
 const config = {
-  rootName: '§',
+  section: '§',
+  sectionLeft: '◦§',
+  sectionRight: '§◦',
+  keyPostfix: '⏎',
   tabSize: 2,
-  literalBlockScalar: literalBlockScalar,
+  literalBlockScalar: '|+',
   literalBlockChoppingScalar: '|-',
-  blockScalar4Traverse: { '\\|\\-': literalBlockScalar, '>\\-': literalBlockScalar, '>\\+': literalBlockScalar },
+  blockScalar4Traverse: {
+    get '\\|\\-' () { return this.literalBlockScalar },
+    get '>\\-' () { return this.literalBlockScalar },
+    get '>\\+' () { return this.literalBlockScalar }
+  },
   maxStringLength: 15,
+  nodeMap: {
+    object: {
+      d3: { attributes: {}, nodeSvgShape: { shape: 'circle', shapeProps: { r: 10 } } }
+    },
+    array: {
+      d3: { attributes: {}, nodeSvgShape: { shape: 'rect', shapeProps: { width: 15, height: 15, x: -10, y: -5 } } }
+    }
+  },
   marker: { name: '*', content: '**' },
   markerMap: {
     highlight: {
       name: 'highlight',
-      d3: {
-        nodeSvgShape: {
-          shape: 'circle',
-          shapeProps: {
-            r: 10,
-            fill: 'red',
-            stroke: 'red',
-          },
-        },
-      }
+      d3: patchD3({ color: { fill: 'red', stroke: 'red' } }),
     },
     truncatedDown: {
       name: 'truncatedDown',
-      d3: getTruncatedD3('⬇'),
+      d3: patchD3({ attributes: { '': '⬇' }, color: { fill: 'lightgoldenrodyellow', stroke: 'grey' } }),
     },
     truncatedUp: {
       name: 'truncatedUp',
-      d3: getTruncatedD3('⬆'),
-    }
+      d3: patchD3({ attributes: { '': '⬆' }, color: { fill: 'lightgoldenrodyellow', stroke: 'grey' } }),
+    },
+    truncatedLeft: {
+      name: 'truncatedLeft',
+      d3: patchD3({ attributes: { '': '⬅' }, color: { fill: 'lightcyan', stroke: 'grey' } }),
+    },
+    truncatedRight: {
+      name: 'truncatedRight',
+      d3: patchD3({ attributes: { '': '⮕' }, color: { fill: 'lightcyan', stroke: 'grey' } }),
+    },
   }
 };
 
