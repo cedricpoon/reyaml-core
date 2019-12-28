@@ -5,6 +5,7 @@
 - [ ] npm
 - [ ] cicd
 - [ ] shrink modules and diversify objects
+- [ ] full documentation
 
 ## Manual CI Test
 1. Are modules in reyaml-core mutable (i.e. standalone) enough?

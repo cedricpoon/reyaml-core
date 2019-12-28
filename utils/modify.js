@@ -12,20 +12,27 @@ class Modify {
   }
 
   append(o) {
-    Object.keys(o).forEach(key => {
-      if (Array.isArray(this._source))
-        this._source.push(o[key]);
+    if (Array.isArray(this._source)) {
+      const keys = Object.keys(this._source)
+      if (keys.length > 0 && keys[keys.length - 1] < this._source.length - 1)
+        this._source[parseInt(keys[keys.length - 1]) + 1] = o;
       else
+        this._source.push(o);
+    } else {
+      Object.keys(o).forEach(key => {
         this._source[key] = o[key];
-    });
+      });
+    }
     return this;
   }
 
   prepend(o) {
     if (Array.isArray(this._source)) {
-      Object.keys(o).reverse().forEach(key => {
-        this._source.unshift(o[key]);
-      });
+      const keys = Object.keys(this._source)
+      if (keys[0] && keys[0] > 0)
+        this._source[keys[0] - 1] = o;
+      else
+        this._source.unshift(o);
     } else {
       const _source2 = clone(this._source);
       Object.keys(this._source).forEach(key => {

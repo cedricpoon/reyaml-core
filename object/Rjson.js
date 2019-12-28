@@ -19,8 +19,8 @@ class Rjson {
     return ifNullThenX(this, () => new Rjson(mark_line({ sourceObj: this.raw, lineNo })), this);
   }
 
-  truncate({ level, lineNo }) {
-    return ifNullThenX(this, () => new Rjson(truncate({ sourceObj: this.raw, lineNo, level })), this);
+  truncate({ level, siblingSize, lineNo }) {
+    return ifNullThenX(this, () => new Rjson(truncate({ sourceObj: this.raw, lineNo, level, siblingSize })), this);
   }
 
   get d3() { return ifNullThenX(this, () => transform_d3({ sourceObj: this.raw }), null);  }

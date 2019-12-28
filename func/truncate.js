@@ -7,8 +7,9 @@ function truncChildren({ sourceObj, level }) {
   const _trunc = (o, lv) => Object.keys(o).map(name => {
     if (o[name]) {
       if (typeof o[name] === 'object' && lv > 0)
-        _trunc(o[name],
-          lv - (Array.isArray(o[name]) || Object.prototype.hasOwnProperty.call(o[name], marker.name) ? 0 : 1)
+        _trunc(
+          o[name],
+          lv - (Object.prototype.hasOwnProperty.call(o[name], marker.name) ? 0 : 1)
         );
       else if (typeof o[name] === 'object') {
         o[name] = {};
@@ -25,7 +26,7 @@ function findParent({ sourceObj, obj, level }) {
     traverse(sourceObj)
       .toObject(obj)
       // eslint-disable-next-line no-unused-vars
-      .then((o, name) => { topMost = false; obj = o; if (Array.isArray(obj)) i--; });
+      .then((o, name) => { topMost = false; obj = o; });
     if (topMost) return { parent: obj, i: level - i };
   }
   return { parent: obj, i: 0 };
@@ -40,16 +41,29 @@ function vertically({ level, sourceObj, o }) {
   if (sourceObj !== parent && Object.keys(parent).length > 1) { // case of uplifted dummy parent
     const x = {};
     x[marker.name] = markerMap.truncatedUp.name;
-    x[marker.content] = { ...parent };
+    if (Array.isArray(parent))
+      x[marker.content] = [ ...parent ];
+    else
+      x[marker.content] = { ...parent };
     parent = x;
     i--;  // compensate an extra level created by truncatedUp
-  } else if (sourceObj === parent && Array.isArray(parent)) {  // case of origin array dummy parent
-    i--;
   }
   sourceObj = parent;
   truncChildren({ sourceObj, level: level * 2 - i }); // `o` as parent
   return sourceObj;
 }
+
+const trimMark = (o, symbol, type) => {
+  const o2a = Array.isArray(o) ? {
+    [marker.name]: type.name
+  } : {
+    [symbol]: { [marker.name]: type.name }
+  };
+  if (symbol === sectionLeft)
+    modify(o).prepend(o2a);
+  else
+    modify(o).append(o2a);
+};
 
 function trimLHS({ o, names, siblingSize, pivot }) {
   let flg = false;
@@ -57,8 +71,7 @@ function trimLHS({ o, names, siblingSize, pivot }) {
     delete o[names[i]];
     flg = true;
   }
-  if (flg && !Array.isArray(o))
-    modify(o).prepend({ [`${sectionLeft}`]: { [marker.name]: markerMap.truncatedLeft.name } }); // left arrow
+  if (flg) trimMark(o, sectionLeft, markerMap.truncatedLeft); // left arrow
 }
 
 function trimChildrenFromLHS({ o, names, siblingSize, pivot }) {
@@ -70,10 +83,8 @@ function trimChildrenFromLHS({ o, names, siblingSize, pivot }) {
       traverse(o[names[i]])
         .eachInodes(Traverse.from.RIGHT_TO_LEFT)
         .forNextLevel(o2 => {
-          retainSize = 0; //reset retainment
-          // left arrow
-          if (flg && !Array.isArray(o2))
-            modify(o2).prepend({ [`${sectionLeft}`]: { [marker.name]: markerMap.truncatedLeft.name } });
+          retainSize = 0; // reset retainment
+          if (flg) trimMark(o2, sectionLeft, markerMap.truncatedLeft); // left arrow
           flg = false; // reset flag
         })
         .then((o2, name2) => {
@@ -90,8 +101,7 @@ function trimRHS({ o, names, siblingSize, pivot }) {
     delete o[names[i]];
     flg = true;
   }
-  if (flg && !Array.isArray(o))
-    modify(o).append({ [`${sectionRight}`]: { [marker.name]: markerMap.truncatedRight.name } }); // right arrow
+  if (flg) trimMark(o, sectionRight, markerMap.truncatedRight); // right arrow
 }
 
 function trimChildrenFromRHS({ o, names, siblingSize, pivot }) {
@@ -103,10 +113,8 @@ function trimChildrenFromRHS({ o, names, siblingSize, pivot }) {
       traverse(o[names[i]])
         .eachInodes(Traverse.from.LEFT_TO_RIGHT)
         .forNextLevel(o2 => {
-          retainSize = 0; //reset retainment
-          // right arrow
-          if (flg && !Array.isArray(o2))
-            modify(o2).append({ [`${sectionRight}`]: { [marker.name]: markerMap.truncatedRight.name } });
+          retainSize = 0; // reset retainment
+          if (flg) trimMark(o2, sectionRight, markerMap.truncatedRight); // right arrow
           flg = false; // reset flag
         })
         .then((o2, name2) => {
@@ -137,7 +145,7 @@ function horizontally({ siblingSize, sourceObj, targetObj }) {
   return sourceObj;
 }
 
-function truncate({ sourceObj, level, lineNo }) {
+function truncate({ sourceObj, level, siblingSize, lineNo }) {
   if (level !== null)
     traverse(sourceObj)
       .toLineNo(lineNo)
@@ -147,8 +155,10 @@ function truncate({ sourceObj, level, lineNo }) {
           o = r.o;
           name = r.name;
         }
-        sourceObj = vertically({ level, sourceObj, o });  // apply leveling rule
-        sourceObj = horizontally({ siblingSize: 2, sourceObj, targetObj: o[name] }); // apply sibling rule on leveled tree
+        if (level > 0)
+          sourceObj = vertically({ level, sourceObj, o });  // apply leveling rule
+        if (siblingSize > 0)
+          sourceObj = horizontally({ siblingSize, sourceObj, targetObj: o[name] }); // apply sibling rule on leveled tree
       });
   return sourceObj;
 }

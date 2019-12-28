@@ -98,7 +98,7 @@ function patch(yamlString) {
     return patch(traverseNode(this.yamlString, (prev, curr, next) => {
       if (startWithKey(curr)) {
         const _key = getKey(curr);
-        return `${_key.substr(0, _key.lastIndexOf(':'))}${keyPostfix}:`;
+        return `${_key.substr(0, _key.lastIndexOf(':'))}${keyPostfix}${curr.substr(_key.lastIndexOf(':'))}`;
       }
       else
         return curr
@@ -118,6 +118,6 @@ module.exports = {
       .unifyBlockScalar()
       .wrapKeyPair()
       .appendBlockScalar()
-//      .appendKey()
+      .appendKey()
       .result()
 };
