@@ -38,7 +38,7 @@ async function main() {
         if (process.argv.length === 6) {
           const line_no = parseInt(process.argv[4], 10);
           const level = parseInt(process.argv[5], 10);
-          writeResult({ jsUpdatedSource: ryaml.json.truncate({ lineNo: line_no, level }).raw });
+          writeResult({ jsUpdatedSource: ryaml.toRjson().truncate({ lineNo: line_no, level }).raw });
         } else {
           error();
         }
@@ -56,7 +56,7 @@ async function main() {
       case 'mark-line':
         if (process.argv.length === 5) {
           const line_no = parseInt(process.argv[4], 10);
-          writeResult({ jsUpdatedSource: ryaml.json.markLine({ lineNo: line_no }).raw });
+          writeResult({ jsUpdatedSource: ryaml.toRjson().markLine({ lineNo: line_no }).raw });
         } else {
           error();
         }
@@ -65,8 +65,8 @@ async function main() {
       case 'insert':
         if (process.argv.length === 6) {
           const _new = await readFile({ path: process.argv[5] });
-          const insertee = new rc.Ryaml(_new).json;
-          writeResult({ jsUpdatedSource: ryaml.json.insert({ key: process.argv[4], insertee }).raw });
+          const insertee = new rc.Ryaml(_new).toRjson();
+          writeResult({ jsUpdatedSource: ryaml.toRjson().insert({ key: process.argv[4], insertee }).raw });
         } else {
           error();
         }
@@ -74,7 +74,7 @@ async function main() {
 
       case 'transform-d3':
         if (process.argv.length === 4) {
-          writeResult({ jsUpdatedSource: ryaml.json.d3 });
+          writeResult({ jsUpdatedSource: ryaml.toRjson().toD3() });
         } else {
           error();
         }
@@ -82,7 +82,7 @@ async function main() {
 
       case 'count-key':
         if (process.argv.length === 4) {
-          console.log(ryaml.json.keyCount);
+          console.log(ryaml.toRjson().keyCount);
         } else {
           error();
         }
@@ -90,7 +90,7 @@ async function main() {
 
       case 'transform-js':
         if (process.argv.length === 4) {
-          writeResult({ jsUpdatedSource: ryaml.json.raw });
+          writeResult({ jsUpdatedSource: ryaml.toRjson().raw });
         } else {
           error();
         }

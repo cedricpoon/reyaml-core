@@ -3,6 +3,8 @@ const { transform_d3 } = require('../func/transform_d3');
 const { mark_line } = require('../func/mark_line');
 const { count_key } = require('../func/count_key');
 const { truncate } = require('../func/truncate');
+const traverse = require('../utils/traverse');
+const modify = require('../utils/modify');
 
 const ifNullThenX = (_this, f, x) => { return _this.raw ? f() : x };
 
@@ -23,7 +25,17 @@ class Rjson {
     return ifNullThenX(this, () => new Rjson(truncate({ sourceObj: this.raw, lineNo, level, siblingSize })), this);
   }
 
-  get d3() { return ifNullThenX(this, () => transform_d3({ sourceObj: this.raw }), null);  }
+  traverse() {
+    return traverse(this.raw);
+  }
+
+  modify() {
+    return modify(this.raw);
+  }
+
+  toD3() {
+    return ifNullThenX(this, () => transform_d3({ sourceObj: this.raw }), null);
+  }
 
   get keyCount() { return count_key({ sourceObj: this.raw }); }
 }

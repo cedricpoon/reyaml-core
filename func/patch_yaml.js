@@ -116,8 +116,8 @@ function patch(yamlString) {
   return this;
 }
 
-module.exports = {
-  patch_yaml: ({ yamlString }) =>
+const patch_profile = {
+  default: ({ yamlString }) =>
     patch(yamlString)
       .removeEmptyLine()
       .unifyBlockScalar()
@@ -125,4 +125,9 @@ module.exports = {
       .appendBlockScalar()
       .appendKey()
       .result()
+};
+
+module.exports = {
+  patcher: patch,
+  patch_yaml: patch_profile
 };
