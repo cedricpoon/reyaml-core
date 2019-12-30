@@ -43,6 +43,8 @@ class Modify {
     }
     return this;
   }
+
+  get self() { return this._source; }
 }
 
 module.exports = modify;

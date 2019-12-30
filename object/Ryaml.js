@@ -21,7 +21,7 @@ class Ryaml {
   }
 /**
  * Patch YAML string with given patcher function.
- * @param {function} p ({ patcher }) => patcher.xxx().yyy() For actual patching the original YAML string.
+ * @param {function} ({ patcher }) => patcher.xxx().yyy() For actual patching the original YAML string.
  * @returns {object} Immutable Ryaml with new YAML string.
  */
   patch(p) {
