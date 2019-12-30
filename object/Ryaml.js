@@ -1,9 +1,17 @@
-const { count_junk_line } = require('../func/count_junk_line');
+const { count_junk_line, is_junk_line } = require('../func/count_junk_line');
 const { transform_js } = require('../func/transform_js');
 const { patcher, patch_yaml } = require('../func/patch_yaml');
 const Rjson = require('./Rjson');
 
 class Ryaml {
+/**
+ * Determine whenever it is a junk line.
+ * @param {string} line String to be determined.
+ * @returns {boolean} Is junk line or not.
+ */
+  static isJunkLine({ line }) {
+    return is_junk_line(line);
+  }
 /**
  * Constructor.
  * @param {string} raw YAML string.
