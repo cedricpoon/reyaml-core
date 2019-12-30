@@ -60,42 +60,38 @@ function patch(yamlString) {
   this.yamlString = yamlString;
 
   /* eslint-disable no-unused-vars */
-  this.wrapKeyPair = () => {
-    return patch(traverseNode(this.yamlString, (prev, curr, next) => {
+  this.wrapKeyPair = () =>
+    patch(traverseNode(this.yamlString, (prev, curr, next) => {
       if (isKeyPair(curr))
         return `${getKey(curr)} ${literalBlockChoppingScalar}\n` + ' '.repeat(countIndentWithHyphen(curr) + tabSize) + getValue(curr);
       else
         return curr;
     }));
-  }
 
-  this.appendBlockScalar = () => {
-    return patch(traverseNode(this.yamlString, (prev, curr, next) => {
+  this.appendBlockScalar = () =>
+    patch(traverseNode(this.yamlString, (prev, curr, next) => {
       if (next !== null && startWithKey(curr) && hasNoValue(curr) && !startWithKey(next) && !isArray(next))
         return `${curr} ${literalBlockScalar}`;
       else
         return curr
     }));
-  }
 
-  this.removeEmptyLine = () => {
-    return patch(
+  this.removeEmptyLine = () =>
+    patch(
       this.yamlString
         .split('\n')
         .reduce((a, x) => is_parser_ignorable(x) ? a : a += `${x}\n`, '')
     );
-  }
 
-  this.unifyBlockScalar = () => {
-    return patch(traverseNode(this.yamlString, (prev, curr, next) => {
+  this.unifyBlockScalar = () =>
+    patch(traverseNode(this.yamlString, (prev, curr, next) => {
       if (startWithKey(curr) || isArray(curr))
         return replace(curr, blockScalar4Traverse);
       return curr;
     }));
-  }
 
-  this.appendKey = () => {
-    return patch(traverseNode(this.yamlString, (prev, curr, next) => {
+  this.appendKey = () =>
+    patch(traverseNode(this.yamlString, (prev, curr, next) => {
       if (startWithKey(curr)) {
         const _key = getKey(curr);
         let separator = ':';
@@ -108,7 +104,6 @@ function patch(yamlString) {
       else
         return curr
     }));
-  }
 
   this.result = () => this.yamlString;
   /* eslint-enable no-unused-vars */
@@ -123,8 +118,8 @@ const patch_profile = {
       .removeEmptyLine()
       .unifyBlockScalar()
       .wrapKeyPair()
-      .appendBlockScalar()
       .appendKey()
+      .appendBlockScalar()
       .result()
 };
 
