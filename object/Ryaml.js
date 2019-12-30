@@ -21,11 +21,11 @@ class Ryaml {
   }
 /**
  * Patch YAML string with given patcher function.
- * @param {function} ({ patcher }) => patcher.xxx().yyy() For actual patching the original YAML string.
+ * @param {function} patcher => patcher.xxx().yyy() For actual patching the original YAML string.
  * @returns {object} Immutable Ryaml with new YAML string.
  */
   patch(p) {
-    return new Ryaml(p({ patcher: patcher(this.raw) }).result());
+    return new Ryaml(p(patcher(this.raw)).result());
   }
 /**
  * Convert to Rjson object.

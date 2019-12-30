@@ -117,6 +117,7 @@ function patch(yamlString) {
 }
 
 const patch_profile = {
+  raw: ({ yamlString }) => yamlString,
   default: ({ yamlString }) =>
     patch(yamlString)
       .removeEmptyLine()

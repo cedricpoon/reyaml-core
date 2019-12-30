@@ -43,19 +43,19 @@ class Rjson {
   }
 /**
  * Traverse raw object.
- * @param {function} ({ traverser }) => traverser.toXXX().then() Actual traverse using traverse() with clone of raw object.
+ * @param {function} traverser => traverser.toXXX().then() Actual traverse using traverse() with clone of raw object.
  * @returns {object} Immutable Rjson.
  */
   traverse(t) {
-    return new Rjson(t({ traverser: traverse(JSON.parse(JSON.stringify(this.raw))) }).self);
+    return new Rjson(t(traverse(JSON.parse(JSON.stringify(this.raw)))).self);
   }
 /**
  * Modify raw object.
- * @param {function} ({ modifier }) => modifier.xxx().yyy() Modify using modify() with clone of raw object.
+ * @param {function} modifier => modifier.xxx().yyy() Modify using modify() with clone of raw object.
  * @returns {object} Immutable Rjson.
  */
   modify(m) {
-    return new Rjson(m({ modifier: modify(JSON.parse(JSON.stringify(this.raw))) }).self);
+    return new Rjson(m(modify(JSON.parse(JSON.stringify(this.raw)))).self);
   }
 /**
  * Convert to D3 structured object.
