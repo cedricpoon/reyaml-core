@@ -146,7 +146,7 @@ function horizontally({ siblingSize, sourceObj, targetObj }) {
 }
 
 function truncate({ sourceObj, level, siblingSize, lineNo }) {
-  if (level !== null)
+  if (level !== null && sourceObj !== null)
     traverse(sourceObj)
       .toLineNo(lineNo)
       .then((o, name, _self) => {

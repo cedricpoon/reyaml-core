@@ -117,8 +117,8 @@ function patch(yamlString) {
 }
 
 const patch_profile = {
-  raw: ({ yamlString }) => yamlString,
-  default: ({ yamlString }) =>
+  default: ({ yamlString }) => yamlString,
+  preD3: ({ yamlString }) =>
     patch(yamlString)
       .removeEmptyLine()
       .unifyBlockScalar()

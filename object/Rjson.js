@@ -61,8 +61,8 @@ class Rjson {
  * Convert to D3 structured object.
  * @returns {object} JSON object in D3 structure.
  */
-  toD3() {
-    return transform_d3({ sourceObj: this.raw });
+  toD3({ profile = 'default' } = {}) {
+    return transform_d3[profile]({ sourceObj: this.raw });
   }
 /**
  * Count number of keys in raw object.

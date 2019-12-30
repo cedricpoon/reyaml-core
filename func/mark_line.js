@@ -9,7 +9,7 @@ function appendAsterisk(obj, name) {
 }
 
 function mark({ sourceObj, lineNo }) {
-  if (lineNo !== null)
+  if (lineNo !== null && sourceObj !== null)
     traverse(sourceObj)
       .toLineNo(lineNo)
       .then((o, name) => { appendAsterisk(o, name) });
