@@ -16,7 +16,7 @@
   "scripts": {
     "start": "node ./cli.js",
     "eslint": "node ./node_modules/eslint/bin/eslint.js .",
-    "test": "npm run eslint",
+    "test": "npm run eslint | npm audit",
     "debug": "node -i -e \"$(< index.js)\"",
     "debug-windows": "@powershell node -i -e \\\"$(Get-Content index.js)\\\""
   },
