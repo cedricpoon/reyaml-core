@@ -37,7 +37,8 @@ const _trLn = (yStr, f) => yStr
         result: result + `${f(
           (i - 1 > 0) ? yamlArr[i - 1] : null,
           ln,
-          (i + 1 < yamlArr.length) ? yamlArr[i + 1] : null
+          (i + 1 < yamlArr.length) ? yamlArr[i + 1] : null,
+          i
         )}\n`,
         prevIndent: countIndentWithHyphen(ln),
         isScalar: (i + 1 < yamlArr.length)
@@ -61,7 +62,7 @@ function patch(yamlString) {
 
   /* eslint-disable no-unused-vars */
   this.wrapKeyPair = () =>
-    patch(traverseNode(this.yamlString, (prev, curr, next) => {
+    patch(traverseNode(this.yamlString, (prev, curr, next, i) => {
       if (isKeyPair(curr))
         return `${getKey(curr)} ${literalBlockChoppingScalar}\n` + ' '.repeat(countIndentWithHyphen(curr) + tabSize) + getValue(curr);
       else
@@ -69,7 +70,7 @@ function patch(yamlString) {
     }));
 
   this.appendBlockScalar = () =>
-    patch(traverseNode(this.yamlString, (prev, curr, next) => {
+    patch(traverseNode(this.yamlString, (prev, curr, next, i) => {
       if (next !== null && startWithKey(curr) && hasNoValue(curr) && !startWithKey(next) && !isArray(next))
         return `${curr} ${literalBlockScalar}`;
       else
@@ -84,14 +85,14 @@ function patch(yamlString) {
     );
 
   this.unifyBlockScalar = () =>
-    patch(traverseNode(this.yamlString, (prev, curr, next) => {
+    patch(traverseNode(this.yamlString, (prev, curr, next, i) => {
       if (startWithKey(curr) || isArray(curr))
         return replace(curr, blockScalar4Traverse);
       return curr;
     }));
 
   this.appendKey = () =>
-    patch(traverseNode(this.yamlString, (prev, curr, next) => {
+    patch(traverseNode(this.yamlString, (prev, curr, next, i) => {
       if (startWithKey(curr)) {
         const _key = getKey(curr);
         let separator = ':';
@@ -105,6 +106,33 @@ function patch(yamlString) {
         return curr
     }));
 
+  this.wipeSingularArray = () => {
+    const stack = [];
+    let indent = -1;
+    let singularIndex = [];
+    traverseNode(this.yamlString, (prev, curr, next, i) => {
+      const currIndent = countIndentWithHyphen(curr);
+      if (currIndent > indent) stack.push({ i: -1, ind: currIndent });
+      else if (currIndent < indent) {
+        let pop;
+        do {
+          pop = stack.pop();
+          if (pop.i > -1) singularIndex.push(pop.i);
+        } while (stack[stack.length - 1].ind !== currIndent);
+      }
+      if (isArray(curr) && startWithKey(curr)) {
+        if (stack[stack.length - 1].i === -1) stack[stack.length - 1].i = i;
+        else stack[stack.length - 1].i = -2;
+      }
+      indent = currIndent;
+    });
+    const yamlArray = this.yamlString.split('\n');
+    singularIndex.forEach(i => {
+      yamlArray[i] = yamlArray[i].replace('-', ' ');
+    });
+    return patch(yamlArray.join('\n'));
+  }
+
   this.result = () => this.yamlString;
   /* eslint-enable no-unused-vars */
 
@@ -116,6 +144,7 @@ const patch_profile = {
   preD3: ({ yamlString }) =>
     patch(yamlString)
       .removeEmptyLine()
+      .wipeSingularArray()
       .unifyBlockScalar()
       .wrapKeyPair()
       .appendKey()
