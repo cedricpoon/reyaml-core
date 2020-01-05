@@ -11,8 +11,11 @@ function traverse(sourceObj) {  // instantiation shorthand
 }
 
 class Traverse {
-  /* Traverse Enums */
+  /* Enums for direction */
   static get from() { return { LEFT_TO_RIGHT: 0, RIGHT_TO_LEFT: 1 } }
+
+  /* Enums for target */
+  static get to() { return { FIRST: 0, MIDDLE: 1, LAST: 2 } }
 
   constructor(sourceObj) {
     this._source = sourceObj;
@@ -21,8 +24,8 @@ class Traverse {
 
   eachInodes(dir = Traverse.from.LEFT_TO_RIGHT) {  // breadth-wise
     this._run = (callback, nextLevelHandler) => {
+      const queue = [];
       const _tr = sourceObj => {
-        const queue = [];
         if (sourceObj) {
           const keys = Object.keys(sourceObj);
           if (dir === Traverse.from.RIGHT_TO_LEFT)
@@ -33,13 +36,16 @@ class Traverse {
               queue.push({ name, o: sourceObj });
           });
           nextLevelHandler(sourceObj, this);  // end of this level as keys.forEach done
-          queue.forEach(({ name: name2, o: o2 }) => { _tr(o2[name2]) });
         }
       }
       if (typeof this._source === 'object')
         _tr(this._source);
+      while (queue.length > 0) {
+        const { name: name2, o: o2 } = queue.shift();
+        _tr(o2[name2]);
+      }
     };
-    return new TraverseEachInodes(this._source, this._run);
+    return new TraverseEachInodes(this);
   }
 
   eachInodesWithObject(obj) {
@@ -67,6 +73,24 @@ class Traverse {
         }
       };
       _walk(this._source);
+    };
+    return this;
+  }
+
+  toDeepestTerminal(target = Traverse.to.FIRST) {
+    this._run = callback => {
+      const { o } = this.eachInodes(Traverse.from.RIGHT_TO_LEFT).return;
+      if (o) {
+        const names = Object.keys(o);
+        switch(target) {
+          case Traverse.to.FIRST:
+            callback(o, names[0], this); break;
+          case Traverse.to.MIDDLE:
+            callback(o, names[Math.floor(names.length / 2)], this); break;
+          case Traverse.to.LAST:
+            callback(o, names[names.length - 1], this); break;
+        }
+      }
     };
     return this;
   }
@@ -116,7 +140,7 @@ class Traverse {
 
   then(f) { this._run(f); return this; }
 
-  get result() {
+  get return() {
     let o = null, name = null;
     this._run((_o, _name) => { o = _o; name = _name; });
     return { o, name };
@@ -126,18 +150,24 @@ class Traverse {
 }
 
 class TraverseEachInodes extends Traverse {
-  constructor(sourceObj, run) {
-    super(sourceObj);
-    super._run = run;
+  constructor(traverser) {
+    super(traverser._source);
+    super._run = traverser._run;
     this._nextLevel = () => {};
   }
 
-  forNextLevel(f) {
+  whenNextLevel(f) {
     this._nextLevel = f;
     return this;
   }
 
   then(f) { this._run(f, this._nextLevel); return this; }
+
+  get return() {
+    let o = null, name = null;
+    this._run((_o, _name) => { o = _o; name = _name; }, this._nextLevel);
+    return { o, name };
+  }
 }
 
 module.exports = traverse;

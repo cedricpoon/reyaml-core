@@ -53,7 +53,7 @@ function vertically({ level, sourceObj, o }) {
   return sourceObj;
 }
 
-const trimMark = (o, symbol, type) => {
+const markTrim = (o, symbol, type) => {
   const o2a = Array.isArray(o) ? {
     [marker.name]: type.name
   } : {
@@ -71,7 +71,7 @@ function trimLHS({ o, names, siblingSize, pivot }) {
     delete o[names[i]];
     flg = true;
   }
-  if (flg) trimMark(o, sectionLeft, markerMap.truncatedLeft); // left arrow
+  if (flg) markTrim(o, sectionLeft, markerMap.truncatedLeft); // left arrow
 }
 
 function trimChildrenFromLHS({ o, names, siblingSize, pivot }) {
@@ -82,9 +82,9 @@ function trimChildrenFromLHS({ o, names, siblingSize, pivot }) {
     if (o[names[i]])
       traverse(o[names[i]])
         .eachInodes(Traverse.from.RIGHT_TO_LEFT)
-        .forNextLevel(o2 => {
+        .whenNextLevel(o2 => {
           retainSize = 0; // reset retainment
-          if (flg) trimMark(o2, sectionLeft, markerMap.truncatedLeft); // left arrow
+          if (flg) markTrim(o2, sectionLeft, markerMap.truncatedLeft); // left arrow
           flg = false; // reset flag
         })
         .then((o2, name2) => {
@@ -101,7 +101,7 @@ function trimRHS({ o, names, siblingSize, pivot }) {
     delete o[names[i]];
     flg = true;
   }
-  if (flg) trimMark(o, sectionRight, markerMap.truncatedRight); // right arrow
+  if (flg) markTrim(o, sectionRight, markerMap.truncatedRight); // right arrow
 }
 
 function trimChildrenFromRHS({ o, names, siblingSize, pivot }) {
@@ -112,9 +112,9 @@ function trimChildrenFromRHS({ o, names, siblingSize, pivot }) {
     if (o[names[i]])
       traverse(o[names[i]])
         .eachInodes(Traverse.from.LEFT_TO_RIGHT)
-        .forNextLevel(o2 => {
+        .whenNextLevel(o2 => {
           retainSize = 0; // reset retainment
-          if (flg) trimMark(o2, sectionRight, markerMap.truncatedRight); // right arrow
+          if (flg) markTrim(o2, sectionRight, markerMap.truncatedRight); // right arrow
           flg = false; // reset flag
         })
         .then((o2, name2) => {
@@ -151,14 +151,24 @@ function truncate({ sourceObj, level, siblingSize, lineNo }) {
       .toLineNo(lineNo)
       .then((o, name, _self) => {
         if (name === marker.content || name === marker.name) {
-          const r = _self.toObject(o).result; // if marked backtrack 1 level
+          const r = _self.toObject(o).return; // if marked backtrack 1 level
           o = r.o;
           name = r.name;
         }
         if (level > 0)
           sourceObj = vertically({ level, sourceObj, o });  // apply leveling rule
-        if (siblingSize > 0)
-          sourceObj = horizontally({ siblingSize, sourceObj, targetObj: o[name] }); // apply sibling rule on leveled tree
+        if (siblingSize > 0) {
+          if (Object.prototype.hasOwnProperty.call(o[name], marker.name)
+              && o[name][marker.content]
+              && typeof o[name][marker.content] === 'object') // lineNo must be object
+          {
+            const { o: o2, name: name2 } = traverse(o[name][marker.content]).toDeepestTerminal(Traverse.to.MIDDLE).return; // deepest terminal of lineNo
+            sourceObj = horizontally({ siblingSize, sourceObj, targetObj: o2 }); // apply sibling rule to deepest inode containing o
+            truncSiblings({ o: o2, name: name2, siblingSize }); // apply sibling rule to deepest terminals
+          } else {
+            sourceObj = horizontally({ siblingSize, sourceObj, targetObj: o[name] }); // apply sibling rule on leveled tree
+          }
+        }
       });
   return sourceObj;
 }

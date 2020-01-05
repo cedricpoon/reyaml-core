@@ -117,8 +117,8 @@ function patch(yamlString) {
         let pop;
         do {
           pop = stack.pop();
-          if (pop.i > -1) singularIndex.push(pop.i);
-        } while (stack[stack.length - 1].ind !== currIndent);
+          if (pop && pop.i > -1) singularIndex.push(pop.i);
+        } while (stack.length > 0 && stack[stack.length - 1].ind !== currIndent);
       }
       if (isArray(curr) && startWithKey(curr)) {
         if (stack[stack.length - 1].i === -1) stack[stack.length - 1].i = i;

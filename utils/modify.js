@@ -1,10 +1,4 @@
-function modify(sourceObj) {  // instantiation shorthand
-  return sourceObj ? new Modify(sourceObj) : Modify;
-}
-
-function clone(o) {
-  return JSON.parse(JSON.stringify(o));
-}
+const modify = sourceObj => sourceObj ? new Modify(sourceObj) : Modify;
 
 class Modify {
   constructor(sourceObj) {
@@ -34,12 +28,15 @@ class Modify {
       else
         this._source.unshift(o);
     } else {
-      const _source2 = clone(this._source);
-      Object.keys(this._source).forEach(key => {
-        delete this._source[key];
+      const temp = modify({});
+      Object.keys(this._source).forEach(name => {
+        if (this._source[name] !== o) {
+          temp.append({ [name]: this._source[name] });
+          delete this._source[name];
+        }
       });
-      modify(this._source).append(o);
-      modify(this._source).append(_source2);
+      this.append(o);
+      this.append(temp.self);
     }
     return this;
   }
