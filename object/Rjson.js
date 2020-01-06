@@ -15,13 +15,20 @@ class Rjson {
     this.raw = raw;
   }
 /**
+ * Clone this.raw via stringify-parsing.
+ * @returns {object} Immutable Rjson.
+ */
+  clone() {
+    return new Rjson(JSON.parse(JSON.stringify(this.raw)));
+  }
+/**
  * Insert "insertee" inside every "key" in object hierarchy.
  * @param {key} key Key of keypair in object.
- * @param {object} insertee JSON object to be inserted.
+ * @param {object} insertee Mutable JSON object to be inserted.
  * @returns {object} Immutable Rjson.
  */
   insert({ key, insertee }) {
-    return new Rjson(insert({ key, jsSource: this.raw, jsNew: insertee.raw }))
+    return new Rjson(insert({ key, jsSource: this.clone().raw, jsNew: insertee.raw }))
   }
 /**
  * Transform raw object on active YAML line to target marked form.
@@ -29,7 +36,7 @@ class Rjson {
  * @returns {object} Immutable Rjson.
  */
   markLine({ lineNo }) {
-    return new Rjson(mark_line({ sourceObj: this.raw, lineNo }))
+    return new Rjson(mark_line({ sourceObj: this.clone().raw, lineNo }))
   }
 /**
  * Truncate raw object hierarchy pivoted to object with lineNo, vertically by level, horizontally by siblingSize.
@@ -39,7 +46,7 @@ class Rjson {
  * @returns {object} Immutable Rjson.
  */
   truncate({ level, siblingSize, lineNo }) {
-    return new Rjson(truncate({ sourceObj: this.raw, lineNo, level, siblingSize }));
+    return new Rjson(truncate({ sourceObj: this.clone().raw, lineNo, level, siblingSize }));
   }
 /**
  * Traverse raw object.
@@ -47,7 +54,7 @@ class Rjson {
  * @returns {object} Immutable Rjson.
  */
   traverse(t) {
-    return new Rjson(t(traverse(JSON.parse(JSON.stringify(this.raw)))).self);
+    return new Rjson(t(traverse(this.clone().raw)).self);
   }
 /**
  * Modify raw object.
@@ -55,7 +62,7 @@ class Rjson {
  * @returns {object} Immutable Rjson.
  */
   modify(m) {
-    return new Rjson(m(modify(JSON.parse(JSON.stringify(this.raw)))).self);
+    return new Rjson(m(modify(this.clone().raw)).self);
   }
 /**
  * Convert to D3 structured object.
