@@ -1,5 +1,5 @@
 /* eslint-env node */
-const rc = require('./index');
+const { Ryaml } = require('./index');
 const { readFile, writeFile } = require('./utils/file_io');
 
 async function writeResult({ jsUpdatedSource }) {
@@ -30,7 +30,7 @@ async function main() {
   if (process.argv.length >= 4) {
     const source = await readFile({ path: process.argv[2] });
     // create Ryaml Object
-    const ryaml = new rc.Ryaml(source);
+    const ryaml = new Ryaml(source);
     // Main options
     switch (process.argv[3]) {
 
@@ -65,7 +65,7 @@ async function main() {
       case 'insert':
         if (process.argv.length === 6) {
           const _new = await readFile({ path: process.argv[5] });
-          const insertee = new rc.Ryaml(_new).toRjson();
+          const insertee = new Ryaml(_new).toRjson();
           writeResult({ jsUpdatedSource: ryaml.toRjson().insert({ key: process.argv[4], insertee }).raw });
         } else {
           error();
