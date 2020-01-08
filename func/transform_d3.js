@@ -1,4 +1,4 @@
-const { marker, markerMap, nodeMap, section, maxStringLength, keyPostfix } = require('../config');
+const { marker, markerMap, nodeMap, symbol, size } = require('../config');
 
 const limitString = (ln, n) => (ln.length > n) ? ln.substr(0, n-1) + '...' : ln;
 
@@ -15,7 +15,7 @@ function transform_mark({ sourceObj, key }) {
 
 function transform_d3_master({ sourceObj, nameHandler }) {
   if (sourceObj != null && Object.keys(sourceObj).length > 1)
-    return transform_d3_from_object({ sourceObj: { [section]: sourceObj }, nameHandler });
+    return transform_d3_from_object({ sourceObj: { [symbol.section]: sourceObj }, nameHandler });
   else
     return transform_d3_from_object({ sourceObj, nameHandler });
 }
@@ -40,7 +40,7 @@ function transform_d3_from_object({ sourceObj, nameHandler }) {
           o.children = na;
         } else {
           o.attributes = {};
-          o.attributes[""] = limitString(pureContent, maxStringLength);
+          o.attributes[""] = limitString(pureContent, size.maxStringSize);
         }
       });
   }
@@ -50,11 +50,11 @@ function transform_d3_from_object({ sourceObj, nameHandler }) {
 const transform_d3_profile = {
   default: ({ sourceObj }) => transform_d3_master({
     sourceObj,
-    nameHandler: x => limitString(x, maxStringLength)
+    nameHandler: x => limitString(x, size.maxStringSize)
   }),
   preD3: ({ sourceObj }) => transform_d3_master({
     sourceObj,
-    nameHandler: x => limitString(x.slice(-1) === keyPostfix ? `${x.slice(0, -1)} ` : x, maxStringLength)
+    nameHandler: x => limitString(x.slice(-1) === symbol.keyPostfix ? `${x.slice(0, -1)} ` : x, size.maxStringSize)
   })
 };
 

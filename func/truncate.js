@@ -1,7 +1,7 @@
 const traverse = require('../utils/traverse');
 const modify = require('../utils/modify');
 const Traverse = traverse();  // get class
-const { marker, markerMap, sectionLeft, sectionRight } = require('../config');
+const { marker, markerMap, symbol } = require('../config');
 
 function truncChildren({ sourceObj, level }) {
   const _trunc = (o, lv) => Object.keys(o).map(name => {
@@ -59,7 +59,7 @@ const markTrim = (o, symbol, type) => {
   } : {
     [symbol]: { [marker.name]: type.name }
   };
-  if (symbol === sectionLeft)
+  if (symbol === symbol.sectionLeft)
     modify(o).prepend(o2a);
   else
     modify(o).append(o2a);
@@ -71,7 +71,7 @@ function trimLHS({ o, names, siblingSize, pivot }) {
     delete o[names[i]];
     flg = true;
   }
-  if (flg) markTrim(o, sectionLeft, markerMap.truncatedLeft); // left arrow
+  if (flg) markTrim(o, symbol.sectionLeft, markerMap.truncatedLeft); // left arrow
 }
 
 function trimChildrenFromLHS({ o, names, siblingSize, pivot }) {
@@ -84,7 +84,7 @@ function trimChildrenFromLHS({ o, names, siblingSize, pivot }) {
         .eachInodes(Traverse.from.RIGHT_TO_LEFT)
         .whenNextLevel(o2 => {
           retainSize = 0; // reset retainment
-          if (flg) markTrim(o2, sectionLeft, markerMap.truncatedLeft); // left arrow
+          if (flg) markTrim(o2, symbol.sectionLeft, markerMap.truncatedLeft); // left arrow
           flg = false; // reset flag
         })
         .then((o2, name2) => {
@@ -101,7 +101,7 @@ function trimRHS({ o, names, siblingSize, pivot }) {
     delete o[names[i]];
     flg = true;
   }
-  if (flg) markTrim(o, sectionRight, markerMap.truncatedRight); // right arrow
+  if (flg) markTrim(o, symbol.sectionRight, markerMap.truncatedRight); // right arrow
 }
 
 function trimChildrenFromRHS({ o, names, siblingSize, pivot }) {
@@ -114,7 +114,7 @@ function trimChildrenFromRHS({ o, names, siblingSize, pivot }) {
         .eachInodes(Traverse.from.LEFT_TO_RIGHT)
         .whenNextLevel(o2 => {
           retainSize = 0; // reset retainment
-          if (flg) markTrim(o2, sectionRight, markerMap.truncatedRight); // right arrow
+          if (flg) markTrim(o2, symbol.sectionRight, markerMap.truncatedRight); // right arrow
           flg = false; // reset flag
         })
         .then((o2, name2) => {

@@ -1,4 +1,4 @@
-const { blockScalar4Traverse, literalBlockScalar, literalBlockChoppingScalar, tabSize, keyPostfix } = require('../config');
+const { blockScalarTranslation, literalBlockScalar, literalBlockChoppingScalar, size, symbol } = require('../config');
 
 const { is_parser_ignorable } = require('./count_junk_line');
 
@@ -64,7 +64,7 @@ function patch(yamlString) {
   this.wrapKeyPair = () =>
     patch(traverseNode(this.yamlString, (prev, curr, next, i) => {
       if (isKeyPair(curr))
-        return `${getKey(curr)} ${literalBlockChoppingScalar}\n` + ' '.repeat(countIndentWithHyphen(curr) + tabSize) + getValue(curr);
+        return `${getKey(curr)} ${literalBlockChoppingScalar}\n` + ' '.repeat(countIndentWithHyphen(curr) + size.tabSize) + getValue(curr);
       else
         return curr;
     }));
@@ -87,7 +87,7 @@ function patch(yamlString) {
   this.unifyBlockScalar = () =>
     patch(traverseNode(this.yamlString, (prev, curr, next, i) => {
       if (startWithKey(curr) || isArray(curr))
-        return replace(curr, blockScalar4Traverse);
+        return replace(curr, blockScalarTranslation);
       return curr;
     }));
 
@@ -100,7 +100,7 @@ function patch(yamlString) {
           separator = '":';
         else if (_key.lastIndexOf('\':') !== -1)
           separator = '\':';
-        return `${_key.substr(0, _key.lastIndexOf(separator))}${keyPostfix}${curr.substr(_key.lastIndexOf(separator))}`;
+        return `${_key.substr(0, _key.lastIndexOf(separator))}${symbol.keyPostfix}${curr.substr(_key.lastIndexOf(separator))}`;
       }
       else
         return curr

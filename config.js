@@ -8,19 +8,23 @@ const patchD3 = ({ attributes, color }) => ({
 });
 
 const config = {
-  section: '§',
-  sectionLeft: '◦§',
-  sectionRight: '§◦',
-  keyPostfix: '⏎',
-  tabSize: 2,
+  symbol: {
+    section: '§',
+    sectionLeft: '◦§',
+    sectionRight: '§◦',
+    keyPostfix: '⏎',
+  },
+  size: {
+    tabSize: 2,
+    maxStringSize: 15,
+  },
   literalBlockScalar: '|+',
   literalBlockChoppingScalar: '|-',
-  blockScalar4Traverse: {
+  blockScalarTranslation: {
     get '\\|\\-' () { return this.literalBlockScalar },
     get '>\\-' () { return this.literalBlockScalar },
     get '>\\+' () { return this.literalBlockScalar }
   },
-  maxStringLength: 15,
   nodeMap: {
     object: {
       d3: { attributes: {}, nodeSvgShape: { shape: 'circle', shapeProps: { r: 10 } } }
