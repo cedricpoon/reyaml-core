@@ -61,18 +61,19 @@ function patch(yamlString) {
   this.yamlString = yamlString;
 
   /* eslint-disable no-unused-vars */
-  this.wrapKeyPair = () =>
+
+  this.wrapKeyPair = ({ tabSize, trailingScalar }) =>
     patch(traverseNode(this.yamlString, (prev, curr, next, i) => {
       if (isKeyPair(curr))
-        return `${getKey(curr)} ${literalBlockChoppingScalar}\n` + ' '.repeat(countIndentWithHyphen(curr) + size.tabSize) + getValue(curr);
+        return `${getKey(curr)} ${trailingScalar}\n` + ' '.repeat(countIndentWithHyphen(curr) + tabSize) + getValue(curr);
       else
         return curr;
     }));
 
-  this.appendBlockScalar = () =>
+  this.appendBlockScalar = ({ blockScalar }) =>
     patch(traverseNode(this.yamlString, (prev, curr, next, i) => {
       if (next !== null && startWithKey(curr) && hasNoValue(curr) && !startWithKey(next) && !isArray(next))
-        return `${curr} ${literalBlockScalar}`;
+        return `${curr} ${blockScalar}`;
       else
         return curr
     }));
@@ -84,14 +85,14 @@ function patch(yamlString) {
         .reduce((a, x) => is_parser_ignorable(x) ? a : a += `${x}\n`, '')
     );
 
-  this.unifyBlockScalar = () =>
+  this.unifyBlockScalar = ({ blockScalarMap }) =>
     patch(traverseNode(this.yamlString, (prev, curr, next, i) => {
       if (startWithKey(curr) || isArray(curr))
-        return replace(curr, blockScalarTranslation);
+        return replace(curr, blockScalarMap);
       return curr;
     }));
 
-  this.appendKey = () =>
+  this.appendKey = ({ postfix }) =>
     patch(traverseNode(this.yamlString, (prev, curr, next, i) => {
       if (startWithKey(curr)) {
         const _key = getKey(curr);
@@ -100,7 +101,7 @@ function patch(yamlString) {
           separator = '":';
         else if (_key.lastIndexOf('\':') !== -1)
           separator = '\':';
-        return `${_key.substr(0, _key.lastIndexOf(separator))}${symbol.keyPostfix}${curr.substr(_key.lastIndexOf(separator))}`;
+        return `${_key.substr(0, _key.lastIndexOf(separator))}${postfix}${curr.substr(_key.lastIndexOf(separator))}`;
       }
       else
         return curr
@@ -134,6 +135,7 @@ function patch(yamlString) {
   }
 
   this.result = () => this.yamlString;
+
   /* eslint-enable no-unused-vars */
 
   return this;
@@ -145,10 +147,10 @@ const patch_profile = {
     patch(yamlString)
       .removeEmptyLine()
       .wipeSingularArray()
-      .unifyBlockScalar()
-      .wrapKeyPair()
-      .appendKey()
-      .appendBlockScalar()
+      .unifyBlockScalar({ blockScalarMap: blockScalarTranslation })
+      .wrapKeyPair({ tabSize: size.tabSize, trailingScalar: literalBlockChoppingScalar })
+      .appendKey({ postfix: symbol.keyPostfix })
+      .appendBlockScalar({ blockScalar: literalBlockScalar })
       .result()
 };
 
