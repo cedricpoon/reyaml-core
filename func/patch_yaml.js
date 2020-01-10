@@ -57,18 +57,18 @@ const _trLn = (yStr, f) => yStr
 const traverseNode = (yamlString, callback) => _trLn(yamlString, callback).result;
 
 function patch(yamlString) {
-  /**
-   * Constructor.
-   * @param {string} yamlString YAML string.
-   */
+/**
+ * Constructor.
+ * @param {string} yamlString YAML string.
+ */
   this._yamlString = yamlString;
-  /* eslint-disable no-unused-vars */
-  /**
-   * Wrap "foo: bar" to become "foo: `trailingScalar`\n\tbar".
-   * @param {int} tabSize size of tab, meant to be soft tab.
-   * @param {string} trailingScalar string appending after key and colon.
-   * @returns {object} Immutable patcher object.
-   */
+/* eslint-disable no-unused-vars */
+/**
+ * Wrap "foo: bar" to become "foo: `trailingScalar`\n\tbar".
+ * @param {int} tabSize size of tab, meant to be soft tab.
+ * @param {string} trailingScalar string appending after key and colon.
+ * @returns {object} Immutable patcher object.
+ */
   this.wrapKeyPair = ({ tabSize, trailingScalar }) =>
     patch(traverseNode(this._yamlString, (prev, curr, next, i) => {
       if (isKeyPair(curr))
@@ -76,11 +76,11 @@ function patch(yamlString) {
       else
         return curr;
     }));
-  /**
-   * Append block scalar to key-colon.
-   * @param {string} blockScalar block scalar to be appended.
-   * @returns {object} Immutable patcher object.
-   */
+/**
+ * Append block scalar to key-colon.
+ * @param {string} blockScalar block scalar to be appended.
+ * @returns {object} Immutable patcher object.
+ */
   this.appendBlockScalar = ({ blockScalar }) =>
     patch(traverseNode(this._yamlString, (prev, curr, next, i) => {
       if (next !== null && startWithKey(curr) && hasNoValue(curr) && !startWithKey(next) && !isArray(next))
@@ -88,32 +88,32 @@ function patch(yamlString) {
       else
         return curr
     }));
-  /**
-   * Remove empty line matching is_parser_ignorable().
-   * @returns {object} Immutable patcher object.
-   */
+/**
+ * Remove empty line matching is_parser_ignorable().
+ * @returns {object} Immutable patcher object.
+ */
   this.removeEmptyLine = () =>
     patch(
       this._yamlString
         .split('\n')
         .reduce((a, x) => is_parser_ignorable(x) ? a : a += `${x}\n`, '')
     );
-  /**
-   * Transform all block scalars in `blockScalarMap` into destinating block scalar.
-   * @param {object} blockScalarMap Map between transformee and transformer. Example in config.js
-   * @returns {object} Immutable patcher object.
-   */
+/**
+ * Transform all block scalars in `blockScalarMap` into destinating block scalar.
+ * @param {object} blockScalarMap Map between transformee and transformer. Example in config.js
+ * @returns {object} Immutable patcher object.
+ */
   this.unifyBlockScalar = ({ blockScalarMap }) =>
     patch(traverseNode(this._yamlString, (prev, curr, next, i) => {
       if (startWithKey(curr) || isArray(curr))
         return replace(curr, blockScalarMap);
       return curr;
     }));
-  /**
-   * Patch each key with `postfix`.
-   * @param {string} postfix Postfix for each key.
-   * @returns {object} Immutable patcher object.
-   */
+/**
+ * Patch each key with `postfix`.
+ * @param {string} postfix Postfix for each key.
+ * @returns {object} Immutable patcher object.
+ */
   this.appendKey = ({ postfix }) =>
     patch(traverseNode(this._yamlString, (prev, curr, next, i) => {
       if (startWithKey(curr)) {
@@ -128,10 +128,10 @@ function patch(yamlString) {
       else
         return curr
     }));
-  /**
-   * Delete all array in YAML with size 1.
-   * @returns {object} Immutable patcher object.
-   */
+/**
+ * Delete all array in YAML with size 1.
+ * @returns {object} Immutable patcher object.
+ */
   this.wipeSingularArray = () => {
     const stack = [];
     let indent = -1;
@@ -158,14 +158,12 @@ function patch(yamlString) {
     });
     return patch(yamlArray.join('\n'));
   }
-  /**
-   * Getter of this._yamlString.
-   * @returns {string} underlying yamlString.
-   */
+/**
+ * Getter of this._yamlString.
+ * @returns {string} underlying yamlString.
+ */
   this.result = () => this._yamlString;
-
-  /* eslint-enable no-unused-vars */
-
+/* eslint-enable no-unused-vars */
   return this;
 }
 
