@@ -12,14 +12,14 @@ class Rjson {
  * @param {object} raw JSON Object.
  */
   constructor(raw = {}) {
-    this.raw = raw;
+    this._raw = raw;
   }
 /**
- * Clone this.raw via stringify-parsing.
+ * Clone this._raw via stringify-parsing.
  * @returns {object} Immutable Rjson.
  */
   clone() {
-    return new Rjson(JSON.parse(JSON.stringify(this.raw)));
+    return new Rjson(JSON.parse(JSON.stringify(this._raw)));
   }
 /**
  * Insert "insertee" inside every "key" in object hierarchy.
@@ -28,7 +28,7 @@ class Rjson {
  * @returns {object} Immutable Rjson.
  */
   insert({ key, insertee }) {
-    return new Rjson(insert({ key, jsSource: this.clone().raw, jsNew: insertee.raw }))
+    return new Rjson(insert({ key, jsSource: this.clone()._raw, jsNew: insertee.raw }))
   }
 /**
  * Transform raw object on active YAML line to target marked form.
@@ -36,7 +36,7 @@ class Rjson {
  * @returns {object} Immutable Rjson.
  */
   markLine({ lineNo }) {
-    return new Rjson(mark_line({ sourceObj: this.clone().raw, lineNo }))
+    return new Rjson(mark_line({ sourceObj: this.clone()._raw, lineNo }))
   }
 /**
  * Truncate raw object hierarchy pivoted to object with lineNo, vertically by level, horizontally by siblingSize.
@@ -46,7 +46,7 @@ class Rjson {
  * @returns {object} Immutable Rjson.
  */
   truncate({ level, siblingSize, lineNo }) {
-    return new Rjson(truncate({ sourceObj: this.clone().raw, lineNo, level, siblingSize }));
+    return new Rjson(truncate({ sourceObj: this.clone()._raw, lineNo, level, siblingSize }));
   }
 /**
  * Traverse raw object.
@@ -54,7 +54,7 @@ class Rjson {
  * @returns {object} Immutable Rjson.
  */
   traverse(t) {
-    return new Rjson(t(traverse(this.clone().raw)).self);
+    return new Rjson(t(traverse(this.clone()._raw)).self);
   }
 /**
  * Modify raw object.
@@ -62,20 +62,25 @@ class Rjson {
  * @returns {object} Immutable Rjson.
  */
   modify(m) {
-    return new Rjson(m(modify(this.clone().raw)).self);
+    return new Rjson(m(modify(this.clone()._raw)).self);
   }
 /**
  * Convert to D3 structured object.
  * @returns {object} JSON object in D3 structure.
  */
   toD3({ profile = 'default' } = {}) {
-    return transform_d3[profile]({ sourceObj: this.raw });
+    return transform_d3[profile]({ sourceObj: this._raw });
   }
 /**
  * Count number of keys in raw object.
  * @returns {int} Number of keys in raw object.
  */
-  get keyCount() { return count_key({ sourceObj: this.raw }); }
+  get keyCount() { return count_key({ sourceObj: this._raw }); }
+/**
+ * Getter for raw.
+ * @returns {object} this._raw.
+ */
+  get raw() { return this._raw }
 }
 
 module.exports = Rjson;

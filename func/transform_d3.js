@@ -52,7 +52,7 @@ const transform_d3_profile = {
     sourceObj,
     nameHandler: x => limitString(x, size.maxStringSize)
   }),
-  preD3: ({ sourceObj }) => transform_d3_master({
+  d3Tree: ({ sourceObj }) => transform_d3_master({
     sourceObj,
     nameHandler: x => limitString(x.slice(-1) === symbol.keyPostfix ? `${x.slice(0, -1)} ` : x, size.maxStringSize)
   })

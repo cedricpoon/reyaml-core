@@ -57,43 +57,65 @@ const _trLn = (yStr, f) => yStr
 const traverseNode = (yamlString, callback) => _trLn(yamlString, callback).result;
 
 function patch(yamlString) {
-  // Constructor
-  this.yamlString = yamlString;
-
+  /**
+   * Constructor.
+   * @param {string} yamlString YAML string.
+   */
+  this._yamlString = yamlString;
   /* eslint-disable no-unused-vars */
-
+  /**
+   * Wrap "foo: bar" to become "foo: `trailingScalar`\n\tbar".
+   * @param {int} tabSize size of tab, meant to be soft tab.
+   * @param {string} trailingScalar string appending after key and colon.
+   * @returns {object} Immutable patcher object.
+   */
   this.wrapKeyPair = ({ tabSize, trailingScalar }) =>
-    patch(traverseNode(this.yamlString, (prev, curr, next, i) => {
+    patch(traverseNode(this._yamlString, (prev, curr, next, i) => {
       if (isKeyPair(curr))
         return `${getKey(curr)} ${trailingScalar}\n` + ' '.repeat(countIndentWithHyphen(curr) + tabSize) + getValue(curr);
       else
         return curr;
     }));
-
+  /**
+   * Append block scalar to key-colon.
+   * @param {string} blockScalar block scalar to be appended.
+   * @returns {object} Immutable patcher object.
+   */
   this.appendBlockScalar = ({ blockScalar }) =>
-    patch(traverseNode(this.yamlString, (prev, curr, next, i) => {
+    patch(traverseNode(this._yamlString, (prev, curr, next, i) => {
       if (next !== null && startWithKey(curr) && hasNoValue(curr) && !startWithKey(next) && !isArray(next))
         return `${curr} ${blockScalar}`;
       else
         return curr
     }));
-
+  /**
+   * Remove empty line matching is_parser_ignorable().
+   * @returns {object} Immutable patcher object.
+   */
   this.removeEmptyLine = () =>
     patch(
-      this.yamlString
+      this._yamlString
         .split('\n')
         .reduce((a, x) => is_parser_ignorable(x) ? a : a += `${x}\n`, '')
     );
-
+  /**
+   * Transform all block scalars in `blockScalarMap` into destinating block scalar.
+   * @param {object} blockScalarMap Map between transformee and transformer. Example in config.js
+   * @returns {object} Immutable patcher object.
+   */
   this.unifyBlockScalar = ({ blockScalarMap }) =>
-    patch(traverseNode(this.yamlString, (prev, curr, next, i) => {
+    patch(traverseNode(this._yamlString, (prev, curr, next, i) => {
       if (startWithKey(curr) || isArray(curr))
         return replace(curr, blockScalarMap);
       return curr;
     }));
-
+  /**
+   * Patch each key with `postfix`.
+   * @param {string} postfix Postfix for each key.
+   * @returns {object} Immutable patcher object.
+   */
   this.appendKey = ({ postfix }) =>
-    patch(traverseNode(this.yamlString, (prev, curr, next, i) => {
+    patch(traverseNode(this._yamlString, (prev, curr, next, i) => {
       if (startWithKey(curr)) {
         const _key = getKey(curr);
         let separator = ':';
@@ -106,12 +128,15 @@ function patch(yamlString) {
       else
         return curr
     }));
-
+  /**
+   * Delete all array in YAML with size 1.
+   * @returns {object} Immutable patcher object.
+   */
   this.wipeSingularArray = () => {
     const stack = [];
     let indent = -1;
     let singularIndex = [];
-    traverseNode(this.yamlString, (prev, curr, next, i) => {
+    traverseNode(this._yamlString, (prev, curr, next, i) => {
       const currIndent = countIndentWithHyphen(curr);
       if (currIndent > indent) stack.push({ i: -1, ind: currIndent });
       else if (currIndent < indent) {
@@ -127,14 +152,17 @@ function patch(yamlString) {
       }
       indent = currIndent;
     });
-    const yamlArray = this.yamlString.split('\n');
+    const yamlArray = this._yamlString.split('\n');
     singularIndex.forEach(i => {
       yamlArray[i] = yamlArray[i].replace('-', ' ');
     });
     return patch(yamlArray.join('\n'));
   }
-
-  this.result = () => this.yamlString;
+  /**
+   * Getter of this._yamlString.
+   * @returns {string} underlying yamlString.
+   */
+  this.result = () => this._yamlString;
 
   /* eslint-enable no-unused-vars */
 

@@ -17,7 +17,7 @@ class Ryaml {
  * @param {string} raw YAML string.
  */
   constructor(raw) {
-    this.raw = raw;
+    this._raw = raw;
   }
 /**
  * Count number of junk lines (e.g. empty line) in YAML string.
@@ -25,7 +25,7 @@ class Ryaml {
  * @returns {int} Number of junk lines.
  */
   countJunkLine({ lineNo }) {
-    return count_junk_line({ sourceYaml: this.raw, lineNo });
+    return count_junk_line({ sourceYaml: this._raw, lineNo });
   }
 /**
  * Patch YAML string with given patcher function.
@@ -33,7 +33,7 @@ class Ryaml {
  * @returns {object} Immutable Ryaml with new YAML string.
  */
   patch(p) {
-    return new Ryaml(p(patcher(this.raw)).result());
+    return new Ryaml(p(patcher(this._raw)).result());
   }
 /**
  * Convert to Rjson object.
@@ -41,8 +41,13 @@ class Ryaml {
  * @returns {object} Immutable Rjson.
  */
   toRjson({ profile = 'default' } = {}) {
-    return new Rjson(transform_js({ yamlString: patch_yaml[profile]({ yamlString: this.raw }) }));
+    return new Rjson(transform_js({ yamlString: patch_yaml[profile]({ yamlString: this._raw }) }));
   }
+/**
+ * Getter for raw.
+ * @returns {string} this._raw.
+ */
+  get raw() { return this._raw }
 }
 
 module.exports = Ryaml;
