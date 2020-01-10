@@ -169,7 +169,7 @@ function patch(yamlString) {
 
 const patch_profile = {
   default: ({ yamlString }) => yamlString,
-  preD3: ({ yamlString }) =>
+  d3Tree: ({ yamlString }) =>
     patch(yamlString)
       .removeEmptyLine()
       .wipeSingularArray()

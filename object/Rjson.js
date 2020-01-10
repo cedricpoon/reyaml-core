@@ -11,7 +11,7 @@ class Rjson {
  * Constructor.
  * @param {object} raw JSON Object.
  */
-  constructor(raw = {}) {
+  constructor(raw) {
     this._raw = raw;
   }
 /**
