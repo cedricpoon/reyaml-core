@@ -14,16 +14,29 @@ async function writeResult({ jsUpdatedSource }) {
 }
 
 function error() {
-  console.log(
-    '\nUsage: npm start << source-file.yaml >> [ actions ] { ... action args ... }\n' +
-    '       ... [ insert ]          << key-in-source-file >>  << to-be-inserted.yaml >>\n' +
-    '       ... [ transform-d3 ]\n' +
-    '       ... [ transform-js ]\n' +
-    '       ... [ count-key ]\n' +
-    '       ... [ mark-line ]       << line-number >>\n' +
-    '       ... [ count-junk-line ] << line-number >>\n' +
-    '       ... [ truncate ]        << line-number >>  << level >> \n'
-  );
+  console.log(`
+Usage: rc [-h|--help] [-v|--version] [[-f|--file file] action [..args]]
+
+Positional arguments:
+  file                      Source YAML file to be processed
+  action                    Name of action to be performed
+  args                      Action arguments depending on chosen action
+
+Optional arguments:
+  -h, --help                Show this user manual and exit
+  -v, --version             Display version number and exit
+  -f, --file                Source YAML as file
+
+Actions:
+  insert [..args]           Insert YAML [file] under each [key] in source YAML
+  transform-d3              Transform source YAML into D3 Hierarchical JSON
+  transform-js              Transform source YAML into JSON using 'js-yaml' module
+  count-key                 Count number of keys in source YAML
+  mark-line [..args]        Mark [lineNo] in source YAML using markerMap in 'config.js'
+  count-junk-line [..args]  Count number of junk line in source YAML before [lineNo]
+  truncate [..args]         Truncate vertically by [level] and horizontally by [size] in YAML pivoted on [lineNo]
+  patch-yaml [..args]       Not yet implemented
+  `);
 }
 
 async function main() {
