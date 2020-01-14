@@ -1,4 +1,4 @@
-# REyaml-core
+# REyaml-Core
 Core & CLI in REyaml for **YAML** to **D3 Hierarchy** transformation and more.
 
 ## Built Environment
