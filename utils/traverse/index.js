@@ -1,27 +1,36 @@
-function getNumberOfNewLineChar(ln) {
-  if (typeof ln === 'string') {
-    const r = ln.match(/\n/g);
-    return r ? r.length : 0;
-  }
-  return 0;
-}
-
-function traverse(sourceObj) {  // instantiation shorthand
-  return sourceObj ? new Traverse(sourceObj) : Traverse;
-}
+const fn = require('./fn');
 
 class Traverse {
-  /* Enums for direction */
+  /**
+   * @static Getter of enumeration for traversing directions
+   *
+   * @return {Object} Enumeration for traversing directions
+   */
   static get from() { return { LEFT_TO_RIGHT: 0, RIGHT_TO_LEFT: 1 } }
 
-  /* Enums for target */
+  /**
+   * @static Getter of enumeration for targets
+   *
+   * @return {Object} Enumeration for targets
+   */
   static get to() { return { FIRST: 0, MIDDLE: 1, LAST: 2 } }
 
+  /**
+   * Constructor
+   *
+   * @param  {Object} sourceObj Object to be traversed
+   */
   constructor(sourceObj) {
     this._source = sourceObj;
     this._run = () => {};
   }
 
+  /**
+   * Run then() on each inodes breadth-wise and run whenNextLevel() for each level advancement
+   *
+   * @param  {enum} dir = Traverse.from.LEFT_TO_RIGHT direction for breadth-wise traverse
+   * @return {Object} TraverseEachInodes object with extra whenNextLevel()
+   */
   eachInodes(dir = Traverse.from.LEFT_TO_RIGHT) {  // breadth-wise
     this._run = (callback, nextLevelHandler) => {
       const queue = [];
@@ -48,6 +57,12 @@ class Traverse {
     return new TraverseEachInodes(this);
   }
 
+  /**
+   * Run then() on each inodes containing `obj`, starting from root depth-wise
+   *
+   * @param  {Object} obj Each traverse must contain obj as children
+   * @return {Object} Mutable self reference
+   */
   eachInodesWithObject(obj) {
     this._run = callback => {
       const _stk = [];
@@ -77,6 +92,12 @@ class Traverse {
     return this;
   }
 
+  /**
+   * Run then() on the deepest terminal
+   *
+   * @param  {enum} target = Traverse.to.FIRST if deepest terminal has siblings, determine which to run then()
+   * @return {Object} Mutable self reference
+   */
   toDeepestTerminal(target = Traverse.to.FIRST) {
     this._run = callback => {
       const { o } = this.eachInodes(Traverse.from.RIGHT_TO_LEFT).return;
@@ -95,6 +116,12 @@ class Traverse {
     return this;
   }
 
+  /**
+   * Run then() on specific line number, with reference to the YAML form of this._source
+   *
+   * @param  {int} lineNo Presented as numeric index of this._source as leveled breadth-wise, root as 0
+   * @return {Object} Mutable self reference
+   */
   toLineNo(lineNo) {
     this._run = callback => {
       const _tr = ({ sourceObj, lineNo, index }) => {
@@ -104,7 +131,7 @@ class Traverse {
           for (; i < keys.length; i++) {
             const name = keys[i];
             if (!Array.isArray(sourceObj) || typeof sourceObj[name] !== 'object') {
-              const newLineNo = getNumberOfNewLineChar(sourceObj[name]);
+              const newLineNo = fn.getNumberOfNewLineChar(sourceObj[name]);
               if (newLineNo === 0 && index === lineNo)
                 callback(sourceObj, name, this);
               else if (newLineNo > 0) {
@@ -124,6 +151,12 @@ class Traverse {
     return this;
   }
 
+  /**
+   * Run then() on specific object `obj`
+   *
+   * @param  {Object} obj Specific object to traverse
+   * @return {Object} Mutable self reference
+   */
   toObject(obj) {
     this._run = callback => {
       const _tr = ({ sourceObj, obj }) => {
@@ -138,31 +171,74 @@ class Traverse {
     return this;
   }
 
+  /**
+   * Promise.js like then() function, runner on every targeted traverse
+   *
+   * @param  {Function} f callback
+   * @return {Object} Mutable self reference
+   */
   then(f) { this._run(f); return this; }
 
+  /**
+   * @typedef {Object} Return
+   * @property {Object} o Parent
+   * @property {string} name Key
+   */
+  /**
+   * Flattening then() to return LAST result (i.e. parameters passed to `f`) without callback
+   *
+   * @return {Return} Last result of all callback to be executed in each traverse
+   */
   get return() {
     let o = null, name = null;
     this._run((_o, _name) => { o = _o; name = _name; });
     return { o, name };
   }
 
+  /**
+   * Getter of this._source
+   *
+   * @return {Object} Raw underlying object
+   */
   get self() { return this._source; }
 }
 
 class TraverseEachInodes extends Traverse {
+  /**
+   * Constructor
+   *
+   * @param  {Traverse} traverser Traverse adapter fo providing whenNextLevel in then() and return()
+   */
   constructor(traverser) {
     super(traverser._source);
     super._run = traverser._run;
     this._nextLevel = () => {};
   }
 
+  /**
+   * Runner for `eachInodes()` breadth-wise level advancement
+   *
+   * @param  {Function} f callback
+   * @return {Object} Mutable self reference
+   */
   whenNextLevel(f) {
     this._nextLevel = f;
     return this;
   }
 
+  /**
+   * Extending then() for adding this._nextLevel during call
+   *
+   * @param  {Function} f callback
+   * @return {Object} Mutable self reference
+   */
   then(f) { this._run(f, this._nextLevel); return this; }
 
+  /**
+   * Extending return() for adding this._nextLevel during call
+   *
+   * @return {Return} Last result of all callback to be executed in each traverse
+   */
   get return() {
     let o = null, name = null;
     this._run((_o, _name) => { o = _o; name = _name; }, this._nextLevel);
@@ -170,4 +246,4 @@ class TraverseEachInodes extends Traverse {
   }
 }
 
-module.exports = traverse;
+module.exports = o => o ? new Traverse(o) : Traverse;

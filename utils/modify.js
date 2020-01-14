@@ -1,10 +1,19 @@
-const modify = sourceObj => sourceObj ? new Modify(sourceObj) : Modify;
-
 class Modify {
+  /**
+   * Constructor
+   *
+   * @param  {Object} sourceObj Source object to be modified
+   */
   constructor(sourceObj) {
     this._source = sourceObj;
   }
 
+  /**
+   * Append object `o` at the end of all keys with its children keypairs
+   *
+   * @param  {Object} o Object to be appended
+   * @return {Object} Mutable self reference
+   */
   append(o) {
     if (Array.isArray(this._source)) {
       const keys = Object.keys(this._source)
@@ -20,6 +29,12 @@ class Modify {
     return this;
   }
 
+  /**
+   * Prepend object `o` at the beginning of all keys with its children keypairs
+   *
+   * @param  {Object} o Object to be prepended
+   * @return {Object} Mutable self reference
+   */
   prepend(o) {
     if (Array.isArray(this._source)) {
       const keys = Object.keys(this._source)
@@ -28,7 +43,7 @@ class Modify {
       else
         this._source.unshift(o);
     } else {
-      const temp = modify({});
+      const temp = new Modify({});
       Object.keys(this._source).forEach(name => {
         if (this._source[name] !== o) {
           temp.append({ [name]: this._source[name] });
@@ -41,7 +56,12 @@ class Modify {
     return this;
   }
 
+  /**
+   * Getter of this._source
+   *
+   * @return {Object} Underlying source object
+   */
   get self() { return this._source; }
 }
 
-module.exports = modify;
+module.exports = o => o ? new Modify(o) : Modify;

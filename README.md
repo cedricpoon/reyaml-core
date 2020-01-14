@@ -4,7 +4,7 @@
 ## To-do
 - [ ] npm
 - [ ] cicd
-- [ ] shrink modules and diversify objects
+- [x] shrink modules and diversify objects
 - [ ] full documentation
 
 ## Manual CI Test
