@@ -10,6 +10,12 @@ Core & CLI in REyaml for **YAML** to **D3 Hierarchy** transformation and more.
 ```sh
 npm install reyaml-core
 ```
+#### Usage
+```js
+const { Ryaml, Rjson } = require('reyaml-core');
+// --- or ---
+import { Ryaml, Rjson } from 'reyaml-core';
+```
 ### CLI Standalone Executable
 ```sh
 npm install -g reyaml-core
@@ -95,3 +101,6 @@ In order to serve the aim of converting YAML to D3 hierarchy, `Ryaml` provides `
 
 ## API
 All the user-facing Classes and methods are commented with in-code **JSDoc**. Please refer to GitHub Wiki page of REyaml-Core for further documentations.
+
+## License
+[MIT](./LICENSE)
