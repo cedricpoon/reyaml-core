@@ -119,7 +119,7 @@ class Traverse {
   /**
    * Run then() on specific line number, with reference to the YAML form of this._source
    *
-   * @param  {int} lineNo Presented as numeric index of this._source as leveled breadth-wise, root as 0
+   * @param  {number} lineNo Presented as numeric index of this._source as leveled breadth-wise, root as 0
    * @return {Object} Mutable self reference
    */
   toLineNo(lineNo) {

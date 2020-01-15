@@ -15,7 +15,7 @@ function patch(yamlString) {
   /**
    * Wrap "foo: bar" to become "foo: `trailingScalar`\n\tbar".
    *
-   * @param {int} tabSize size of tab, meant to be soft tab.
+   * @param {number} tabSize size of tab, meant to be soft tab.
    * @param {string} trailingScalar string appending after key and colon.
    * @returns {Object} Immutable patcher object.
    */

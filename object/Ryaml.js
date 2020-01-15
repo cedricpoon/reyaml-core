@@ -29,8 +29,8 @@ class Ryaml {
   /**
    * Count number of junk lines (e.g. empty line) in YAML string.
    *
-   * @param {int} lineNo For gettng junk line before given line number.
-   * @returns {int} Number of junk lines.
+   * @param {number} lineNo For gettng junk line before given line number.
+   * @returns {number} Number of junk lines.
    */
   countJunkLine({ lineNo }) {
     return count_junk_line({ sourceYaml: this._raw, lineNo });

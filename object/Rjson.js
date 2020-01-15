@@ -31,7 +31,7 @@ class Rjson {
   /**
    * Insert "insertee" inside every "key" in object hierarchy.
    *
-   * @param {key} key Key of keypair in object.
+   * @param {string} key Key of keypair in object.
    * @param {Object} insertee Immutable Rjson to be inserted.
    * @returns {Object} Immutable Rjson.
    */
@@ -42,7 +42,7 @@ class Rjson {
   /**
    * Transform raw object on active YAML line to target marked form.
    *
-   * @param {int} lineNo Active YAML line number for indicating which object in raw object hierarchy to be transformed.
+   * @param {number} lineNo Active YAML line number for indicating which object in raw object hierarchy to be transformed.
    * @returns {Object} Immutable Rjson.
    */
   markLine({ lineNo }) {
@@ -52,9 +52,9 @@ class Rjson {
   /**
    * Truncate raw object hierarchy pivoted to object with lineNo, vertically by level, horizontally by siblingSize.
    *
-   * @param {int} level Trim N level upwards N level downwards.
-   * @param {int} siblingSize Trim N left siblings N right siblings.
-   * @param {int} lineNo Pivot to lineNo for trimming.
+   * @param {number} level Trim N level upwards N level downwards.
+   * @param {number} siblingSize Trim N left siblings N right siblings.
+   * @param {number} lineNo Pivot to lineNo for trimming.
    * @returns {Object} Immutable Rjson.
    */
   truncate({ level, siblingSize, lineNo }) {
@@ -93,7 +93,7 @@ class Rjson {
   /**
    * Count number of keys in raw object.
    *
-   * @returns {int} Number of keys in raw object.
+   * @returns {number} Number of keys in raw object.
    */
   get keyCount() { return count_key({ sourceObj: this._raw }); }
   
