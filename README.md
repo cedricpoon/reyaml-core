@@ -112,7 +112,7 @@ The underlying source JSON object or YAML string will be transformed according t
 In order to serve the aim of converting YAML to D3 hierarchy, `Ryaml` provides `.toRjson([profile = 'default'])` for bridging YAML and JSON Object powered by [js-yaml](https://github.com/nodeca/js-yaml), while `Rjson` provides `.toD3([profile = 'default'])` for ultimately mutating to legit D3 Hierarchical JSON Object.
 
 ## API
-All the user-facing Classes and methods are commented with in-code **JSDoc**. Please refer to [GitHub Wiki page]() of REyaml-Core for further documentations.
+All the user-facing Classes and methods are commented with in-code **JSDoc**. Please refer to [GitHub Wiki page](https://github.com/cedricpoon/reyaml-core/wiki) of REyaml-Core for further documentations.
 
 ## License
 [MIT](./LICENSE)
