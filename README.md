@@ -88,6 +88,11 @@ Optional arguments:
   -h, --help          Show this user manual and exit
 ```
 
+## Testing
+```sh
+npm run test
+```
+
 ## Philosophy
 Two major Classes are exported for instantiation in this module, namely `Ryaml` and `Rjson`.
 
