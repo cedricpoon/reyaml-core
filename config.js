@@ -7,6 +7,13 @@ const patchD3 = ({ attributes, color }) => ({
   },
 });
 
+const blockScalar = {
+  literalKeep: '|+',
+  literalStrip: '|-',
+  foldedKeep: '>+',
+  foldedStrip: '>-'
+};
+
 const config = {
   symbol: {
     section: '§',
@@ -18,12 +25,12 @@ const config = {
     tabSize: 2,
     maxStringSize: 15,
   },
-  literalBlockScalar: '|+',
-  literalBlockChoppingScalar: '|-',
+  wrapKeyPairScalar: blockScalar.literalStrip,
+  appendBlockScalar: blockScalar.literalKeep,
   blockScalarTranslation: {
-    get '|-' () { return this.literalBlockScalar },
-    get '>-' () { return this.literalBlockScalar },
-    get '>+' () { return this.literalBlockScalar }
+    get [blockScalar.literalStrip] () { return blockScalar.literalKeep },
+    get [blockScalar.foldedStrip] () { return blockScalar.literalKeep },
+    get [blockScalar.foldedKeep] () { return blockScalar.literalKeep }
   },
   nodeMap: {
     object: {

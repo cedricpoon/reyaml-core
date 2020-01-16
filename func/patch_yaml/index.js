@@ -1,4 +1,3 @@
-const { literalBlockScalar, literalBlockChoppingScalar } = require('../../config');
 const { is_parser_ignorable } = require('../count_junk_line');
 const fn = require('./fn');
 
@@ -132,7 +131,7 @@ function patch(yamlString) {
   return this;
 }
 
-const patchProfileThunk = ({ blockScalarTranslation, size, symbol }) => {
+const patchProfileThunk = ({ blockScalarTranslation, size, symbol, wrapKeyPairScalar, appendBlockScalar }) => {
   const patchProfile = {
     default: ({ yamlString }) => yamlString,
     d3Tree: ({ yamlString }) =>
@@ -140,9 +139,9 @@ const patchProfileThunk = ({ blockScalarTranslation, size, symbol }) => {
         .removeEmptyLine()
         .wipeSingularArray()
         .unifyBlockScalar({ blockScalarMap: blockScalarTranslation })
-        .wrapKeyPair({ tabSize: size.tabSize, trailingScalar: literalBlockChoppingScalar })
+        .wrapKeyPair({ tabSize: size.tabSize, trailingScalar: wrapKeyPairScalar })
         .appendKey({ postfix: symbol.keyPostfix })
-        .appendBlockScalar({ blockScalar: literalBlockScalar })
+        .appendBlockScalar({ blockScalar: appendBlockScalar })
         .result()
   };
   return patchProfile
