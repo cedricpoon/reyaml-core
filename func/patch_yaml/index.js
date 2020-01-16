@@ -58,13 +58,18 @@ function patch(yamlString) {
    * @param {Object} blockScalarMap Map between transformee and transformer. Example in config.js
    * @returns {Object} Immutable patcher object.
    */
-  this.unifyBlockScalar = ({ blockScalarMap }) =>
-    patch(fn.traverseNode(this._yamlString, (prev, curr, next, i) => {
-      if (fn.startWithKey(curr) || fn.isArray(curr))
-        return fn.replace(curr, blockScalarMap);
+  this.unifyBlockScalar = ({ blockScalarMap }) => {
+    const sanitizedMap = Object.keys(blockScalarMap).reduce((sani, key) => {
+      sani[`${fn.sanitizeRegex(key)}\\s*$`] = blockScalarMap[key];
+      return sani;
+    }, {});
+    return patch(fn.traverseNode(this._yamlString, (prev, curr, next, i) => {
+      if (fn.startWithKey(curr) && fn.endWithScalar(curr))
+        return fn.replace(curr, sanitizedMap);
       return curr;
     }));
-
+  }
+  
   /**
    * Patch each key with `postfix`.
    *
