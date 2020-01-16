@@ -21,9 +21,9 @@ const config = {
   literalBlockScalar: '|+',
   literalBlockChoppingScalar: '|-',
   blockScalarTranslation: {
-    get '\\|\\-' () { return this.literalBlockScalar },
-    get '>\\-' () { return this.literalBlockScalar },
-    get '>\\+' () { return this.literalBlockScalar }
+    get '|-' () { return this.literalBlockScalar },
+    get '>-' () { return this.literalBlockScalar },
+    get '>+' () { return this.literalBlockScalar }
   },
   nodeMap: {
     object: {

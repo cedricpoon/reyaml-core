@@ -23,9 +23,11 @@ function functions () {
 
   this.countIndentWithHyphen = ln => ln.match(/^\s*-*\s*/)[0].length;
 
+  this.sanitizeRegex = s => s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+
   this.replace = (ln, map) => Object
     .keys(map)
-    .reduce((retn, k) => retn.replace(new RegExp(k, 'g'), map[k]), ln);
+    .reduce((retn, k) => retn.replace(new RegExp(this.sanitizeRegex(k), 'g'), map[k]), ln);
 
   this._trLn = (yStr, f) => yStr
     .split('\n')
