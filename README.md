@@ -1,5 +1,8 @@
 # REyaml-Core
 Core & CLI in REyaml for **YAML** to **D3 Hierarchy** transformation and more.
+```js
+new Ryaml('foo: bar').toRjson().toD3()
+```
 
 ## Built Environment
 1. Node.js >= v12.x.x
