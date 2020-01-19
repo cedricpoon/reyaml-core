@@ -18,7 +18,7 @@ function patch(yamlString) {
    * @param {string} trailingScalar string appending after key and colon.
    * @returns {Object} Immutable patcher object.
    */
-  this.wrapKeyPair = ({ tabSize, trailingScalar }) =>
+  this.wrapKeyPair = ({ tabSize, trailingScalar = '' }) =>
     patch(fn.traverseNode(this._yamlString, (prev, curr, next, i) => {
       if (fn.isKeyPair(curr))
         return `${fn.getKey(curr)} ${trailingScalar}\n` + ' '.repeat(fn.countIndentWithHyphen(curr) + tabSize) + fn.getValue(curr);

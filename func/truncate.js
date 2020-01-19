@@ -155,9 +155,9 @@ function truncateThunk({ marker, markerMap, symbol }) {
             o = r.o;
             name = r.name;
           }
-          if (level > 0)
+          if (level >= 0)
             sourceObj = vertically({ level, sourceObj, o });  // apply leveling rule
-          if (siblingSize > 0) {
+          if (siblingSize >= 0) {
             if (Object.prototype.hasOwnProperty.call(o[name], marker.name)
                 && o[name][marker.content]
                 && typeof o[name][marker.content] === 'object') // lineNo must be object
@@ -167,6 +167,7 @@ function truncateThunk({ marker, markerMap, symbol }) {
               truncSiblings({ o: o2, name: name2, siblingSize }); // apply sibling rule to deepest terminals
             } else {
               sourceObj = horizontally({ siblingSize, sourceObj, targetObj: o[name] }); // apply sibling rule on leveled tree
+              truncSiblings({ o, name, siblingSize }); // apply sibling rule to deepest terminals
             }
           }
         });

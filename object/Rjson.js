@@ -52,8 +52,8 @@ class Rjson {
   /**
    * Truncate raw object hierarchy pivoted to object with lineNo, vertically by level, horizontally by siblingSize.
    *
-   * @param {number} level Trim N level upwards N level downwards.
-   * @param {number} siblingSize Trim N left siblings N right siblings.
+   * @param {number} level Retain N level upwards N level downwards.
+   * @param {number} siblingSize Retain N left siblings N right siblings.
    * @param {number} lineNo Pivot to lineNo for trimming.
    * @returns {Object} Immutable Rjson.
    */
