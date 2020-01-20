@@ -3,6 +3,8 @@ const modify = require('../utils/modify');
 const Traverse = traverse();  // get class
 
 function truncateThunk({ marker, markerMap, symbol }) {
+  let trimMark = true; // global mutable variable
+
   function truncChildren({ sourceObj, level }) {
     const _trunc = (o, lv) => Object.keys(o).map(name => {
       if (o[name]) {
@@ -11,9 +13,11 @@ function truncateThunk({ marker, markerMap, symbol }) {
             o[name],
             lv - (Object.prototype.hasOwnProperty.call(o[name], marker.name) ? 0 : 1)
           );
-        else if (typeof o[name] === 'object') {
+        else if (typeof o[name] === 'object' && trimMark) {
           o[name] = {};
           o[name][marker.name] = markerMap.truncatedDown.name;
+        } else if (typeof o[name] === 'object') {
+          o[name] = null;
         }
       }
     });
@@ -38,7 +42,7 @@ function truncateThunk({ marker, markerMap, symbol }) {
       obj: o,
       level: Object.prototype.hasOwnProperty.call(o, marker.name) ? level + 1 : level
     });
-    if (sourceObj !== parent && Object.keys(parent).length > 1) { // case of uplifted dummy parent
+    if (sourceObj !== parent && Object.keys(parent).length > 1 && trimMark) { // case of uplifted dummy parent
       const x = {};
       x[marker.name] = markerMap.truncatedUp.name;
       if (Array.isArray(parent))
@@ -54,15 +58,17 @@ function truncateThunk({ marker, markerMap, symbol }) {
   }
 
   const markTrim = (o, sym, type) => {
-    const o2a = Array.isArray(o) ? {
-      [marker.name]: type.name
-    } : {
-      [sym]: { [marker.name]: type.name }
-    };
-    if (sym === symbol.sectionLeft)
-      modify(o).prepend(o2a);
-    else
-      modify(o).append(o2a);
+    if (trimMark) {
+      const o2a = Array.isArray(o) ? {
+        [marker.name]: type.name
+      } : {
+        [sym]: { [marker.name]: type.name }
+      };
+      if (sym === symbol.sectionLeft)
+        modify(o).prepend(o2a);
+      else
+        modify(o).append(o2a);
+    }
   };
 
   function trimLHS({ o, names, siblingSize, pivot }) {
@@ -145,7 +151,9 @@ function truncateThunk({ marker, markerMap, symbol }) {
     return sourceObj;
   }
 
-  function truncate({ sourceObj, level, siblingSize, lineNo }) {
+  function truncate({ sourceObj, level, siblingSize, lineNo, trimMark: _trimMark }) {
+    trimMark = _trimMark; // set global mutable variable
+    
     if (level !== null && sourceObj !== null)
       traverse(sourceObj)
         .toLineNo(lineNo)

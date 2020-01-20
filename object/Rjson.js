@@ -55,10 +55,11 @@ class Rjson {
    * @param {number} level Retain N level upwards N level downwards.
    * @param {number} siblingSize Retain N left siblings N right siblings.
    * @param {number} lineNo Pivot to lineNo for trimming.
+   * @param {boolean} trimMark Show marking of regarding trim.
    * @returns {Object} Immutable Rjson.
    */
-  truncate({ level, siblingSize, lineNo }) {
-    return new Rjson(truncate({ ...this._config })({ sourceObj: this.clone().raw, lineNo, level, siblingSize }));
+  truncate({ level, siblingSize, lineNo, trimMark = true }) {
+    return new Rjson(truncate({ ...this._config })({ sourceObj: this.clone().raw, lineNo, level, siblingSize, trimMark }));
   }
 
   /**
