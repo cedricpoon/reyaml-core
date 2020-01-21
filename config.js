@@ -15,24 +15,24 @@ const blockScalar = {
 };
 
 const config = {
-  symbol: {
+  symbol: { /* default symbol used by profile `d3Tree` */
     section: '§',
     sectionLeft: '◦§',
     sectionRight: '§◦',
     keyPostfix: '⏎',
   },
-  size: {
+  size: { /* numeric variables */
     tabSize: 2,
-    maxStringSize: 15,
+    maxStringSize: 15, /* maximum length of key and content in JSON keypair */
   },
-  wrapKeyPairScalar: blockScalar.literalStrip,
-  appendBlockScalar: blockScalar.literalKeep,
-  blockScalarTranslation: {
+  wrapKeyPairScalar: blockScalar.literalStrip, /* scalar for wrapKeyPair() in profile `d3Tree` */
+  appendBlockScalar: blockScalar.literalKeep, /* scalar for appendBlockScalar() in profile `d3Tree` */
+  blockScalarTranslation: { /* scalar map for unifyBlockScalar() in profile `d3Tree` */
     get [blockScalar.literalStrip] () { return blockScalar.literalKeep },
     get [blockScalar.foldedStrip] () { return blockScalar.literalKeep },
     get [blockScalar.foldedKeep] () { return blockScalar.literalKeep }
   },
-  nodeMap: {
+  nodeMap: { /* default D3 hierarchical tree node */
     object: {
       d3: { attributes: {}, nodeSvgShape: { shape: 'circle', shapeProps: { r: 10 } } }
     },
@@ -40,9 +40,9 @@ const config = {
       d3: { attributes: {}, nodeSvgShape: { shape: 'rect', shapeProps: { width: 15, height: 15, x: -10, y: -5 } } }
     }
   },
-  marker: { name: '*', content: '**' },
-  markerMap: {
-    highlight: {
+  marker: { name: '*', content: '**' }, /* intermediate marking structure for JSON */
+  markerMap: {  /* types of marking to be applied in D3 transformation */
+    highlight: {  /* active line indicator */
       name: 'highlight',
       d3: patchD3({ color: { fill: 'red', stroke: 'red' } }),
     },
