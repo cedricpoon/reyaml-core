@@ -1,8 +1,10 @@
 #!/usr/bin/env node
-/* eslint-env node */
+// eslint-env node
 
 const fs = require('fs');
 const { ArgumentParser } = require('argparse');
+const process = require('process');
+
 const package_json = require('../package.json');
 const { Ryaml, Rjson } = require('..');
 
@@ -15,19 +17,23 @@ const rc = new ArgumentParser({
 
 rc.addArgument([ '-Y', '--yaml' ], {
   help: 'Source YAML as utf-8 file.',
-  action: 'store'
+  action: 'store',
+  dest: '_yamlPath',
+  metavar: 'YAML'
 });
 
 rc.addArgument([ '-J', '--json' ], {
   help: 'Source JSON as utf-8 file.',
-  action: 'store'
+  action: 'store',
+  dest: '_jsonPath',
+  metavar: 'JSON'
 });
 
 const subrc = rc.addSubparsers({
   title: 'Commands',
   metavar: '[ACTION]',
   required: true,
-  dest: 'action',
+  dest: '_action',
   help: 'List of available Actions.'
 });
 
@@ -39,7 +45,6 @@ const insert = subrc.addParser('insert', {
 
 insert.addArgument('key', {
   help: 'Key in Source for inserting insertee YAML.',
-  type: 'int',
   action: 'store',
 });
 
@@ -108,13 +113,13 @@ truncate.addArgument([ '-l', '--level' ], {
   action: 'store'
 });
 
-truncate.addArgument([ '-s', '--siblings' ], {
+truncate.addArgument([ '-s', '--siblingSize' ], {
   help: 'Retain for N siblings.',
   type: 'int',
   action: 'store'
 });
 
-truncate.addArgument([ '-m', '--mark' ], {
+truncate.addArgument([ '-m', '--trimMark' ], {
   help: 'Include marking of regarding trim.',
   action: 'storeTrue'
 });
@@ -143,9 +148,31 @@ function writeFile({ path, result }) {
   });
 }
 
-function main() {
+function fromPipeline() {
+  return new Promise((resolve) => {
+    process.stdin.on('data', payload => {
+      return resolve(payload.toString('utf8'));
+    })
+  });
+}
+
+async function main() {
   const args = rc.parseArgs();
   console.log(args);
+  // construct source object
+  let source;
+  if (args._yamlPath) {
+    source = new Ryaml(await readFile({ path: args._yamlPath }));
+  } else if (args._jsonPath) {
+    source = new Rjson(await readFile({ path: args._jsonPath }));
+  } else {
+    const pipe = await fromPipeline();
+    try {
+      source = new Rjson(JSON.parse(pipe));
+    } catch (e) {
+      source = new Ryaml(pipe);
+    }
+  }
 }
 
 main();
