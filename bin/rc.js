@@ -39,7 +39,8 @@ const insert = subrc.addParser('insert', {
 
 insert.addArgument('key', {
   help: 'Key in Source for inserting insertee YAML.',
-  action: 'store'
+  type: 'int',
+  action: 'store',
 });
 
 insert.addArgument('insertee', {
@@ -48,19 +49,19 @@ insert.addArgument('insertee', {
 });
 
 // -- transform-d3 command --
-const transformD3 = subrc.addParser('transform-d3', {
+subrc.addParser('transform-d3', {
   description: 'Transform Source into D3 Hierarchical JSON.',
   get 'help' () { return this.description },
 });
 
 // -- transform-js command --
-const transformJS = subrc.addParser('transform-js', {
+subrc.addParser('transform-js', {
   description: 'Transform Source into JSON using "js-yaml" module.',
   get 'help' () { return this.description },
 });
 
 // -- count-key command --
-const countKey = subrc.addParser('count-key', {
+subrc.addParser('count-key', {
   description: 'Count number of keys in Source.',
   get 'help' () { return this.description },
 });
@@ -73,6 +74,7 @@ const markLine = subrc.addParser('mark-line', {
 
 markLine.addArgument('lineNo', {
   help: 'Line number for marking.',
+  type: 'int',
   action: 'store'
 });
 
@@ -84,6 +86,7 @@ const countJunkLine = subrc.addParser('count-junk-line', {
 
 countJunkLine.addArgument('lineNo', {
   help: 'Line number for counting junk line before.',
+  type: 'int',
   action: 'store'
 });
 
@@ -95,16 +98,19 @@ const truncate = subrc.addParser('truncate', {
 
 truncate.addArgument('lineNo', {
   help: 'Line number to pivot the truncation.',
+  type: 'int',
   action: 'store'
 });
 
 truncate.addArgument([ '-l', '--level' ], {
   help: 'Retain for N level upward-downwards.',
+  type: 'int',
   action: 'store'
 });
 
 truncate.addArgument([ '-s', '--siblings' ], {
   help: 'Retain for N siblings.',
+  type: 'int',
   action: 'store'
 });
 
@@ -114,7 +120,7 @@ truncate.addArgument([ '-m', '--mark' ], {
 });
 
 // -- patch-yaml command --
-const patchYaml = subrc.addParser('patch-yaml', {
+subrc.addParser('patch-yaml', {
   description: 'Patch source YAML with the given patcher.',
   get 'help' () { return this.description },
 });
@@ -138,7 +144,8 @@ function writeFile({ path, result }) {
 }
 
 function main() {
-  rc.parseArgs();
+  const args = rc.parseArgs();
+  console.log(args);
 }
 
 main();
