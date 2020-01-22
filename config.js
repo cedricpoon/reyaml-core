@@ -28,9 +28,9 @@ const config = {
   wrapKeyPairScalar: blockScalar.literalStrip, /* scalar for wrapKeyPair() in profile `d3Tree` */
   appendBlockScalar: blockScalar.literalKeep, /* scalar for appendBlockScalar() in profile `d3Tree` */
   blockScalarTranslation: { /* scalar map for unifyBlockScalar() in profile `d3Tree` */
-    get [blockScalar.literalStrip] () { return blockScalar.literalKeep },
-    get [blockScalar.foldedStrip] () { return blockScalar.literalKeep },
-    get [blockScalar.foldedKeep] () { return blockScalar.literalKeep }
+    [blockScalar.literalStrip]: blockScalar.literalKeep,
+    [blockScalar.foldedStrip]: blockScalar.literalKeep,
+    [blockScalar.foldedKeep]: blockScalar.literalKeep
   },
   nodeMap: { /* default D3 hierarchical tree node */
     object: {

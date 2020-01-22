@@ -1,6 +1,6 @@
 {
   "name": "reyaml-core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/cedricpoon/reyaml-core.git"
@@ -15,12 +15,12 @@
     "eslint": "^6.8.0"
   },
   "scripts": {
-    "start": "node ./cli.js",
+    "start": "./bin/rc.js",
     "eslint": "node ./node_modules/eslint/bin/eslint.js .",
     "test": "npm run eslint | npm audit",
     "debug": "node -i -e \"$(< index.js)\"",
     "debug-windows": "@powershell node -i -e \\\"$(Get-Content index.js)\\\""
   },
-  "author": "Cedric Poon",
+  "author": "Cedric Poon <cedric@poons.me>",
   "license": "MIT"
 }

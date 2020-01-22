@@ -1,8 +1,123 @@
 #!/usr/bin/env node
 /* eslint-env node */
 
-const { Ryaml } = require('..');
 const fs = require('fs');
+const { ArgumentParser } = require('argparse');
+const package_json = require('../package.json');
+const { Ryaml, Rjson } = require('..');
+
+// -- top level command --
+const rc = new ArgumentParser({
+  prog: package_json.name.split('-').reduce((s, x) => s + x[0], ''),
+  version: package_json.version,
+  addHelp: true
+});
+
+rc.addArgument([ '-Y', '--yaml' ], {
+  help: 'Source YAML as utf-8 file.',
+  action: 'store'
+});
+
+rc.addArgument([ '-J', '--json' ], {
+  help: 'Source JSON as utf-8 file.',
+  action: 'store'
+});
+
+const subrc = rc.addSubparsers({
+  title: 'Commands',
+  metavar: '[ACTION]',
+  required: true,
+  dest: 'action',
+  help: 'List of available Actions.'
+});
+
+// -- insert command --
+const insert = subrc.addParser('insert', {
+  description: 'Insert YAML insertee under each key in Source.',
+  get 'help'() { return this.description }
+});
+
+insert.addArgument('key', {
+  help: 'Key in Source for inserting insertee YAML.',
+  action: 'store'
+});
+
+insert.addArgument('insertee', {
+  help: 'Insertee YAML file.',
+  action: 'store'
+});
+
+// -- transform-d3 command --
+const transformD3 = subrc.addParser('transform-d3', {
+  description: 'Transform Source into D3 Hierarchical JSON.',
+  get 'help' () { return this.description },
+});
+
+// -- transform-js command --
+const transformJS = subrc.addParser('transform-js', {
+  description: 'Transform Source into JSON using "js-yaml" module.',
+  get 'help' () { return this.description },
+});
+
+// -- count-key command --
+const countKey = subrc.addParser('count-key', {
+  description: 'Count number of keys in Source.',
+  get 'help' () { return this.description },
+});
+
+// -- mark-line command --
+const markLine = subrc.addParser('mark-line', {
+  description: 'Mark lineNo in Source using markerMap in "config.js".',
+  get 'help' () { return this.description },
+});
+
+markLine.addArgument('lineNo', {
+  help: 'Line number for marking.',
+  action: 'store'
+});
+
+// -- count-junk-line command --
+const countJunkLine = subrc.addParser('count-junk-line', {
+  description: 'Count number of junk line in source YAML before lineNo.',
+  get 'help' () { return this.description },
+});
+
+countJunkLine.addArgument('lineNo', {
+  help: 'Line number for counting junk line before.',
+  action: 'store'
+});
+
+// -- truncate command --
+const truncate = subrc.addParser('truncate', {
+  description: 'Truncate vertically by level and horizontally by size in YAML pivoted on lineNo.',
+  get 'help' () { return this.description },
+});
+
+truncate.addArgument('lineNo', {
+  help: 'Line number to pivot the truncation.',
+  action: 'store'
+});
+
+truncate.addArgument([ '-l', '--level' ], {
+  help: 'Retain for N level upward-downwards.',
+  action: 'store'
+});
+
+truncate.addArgument([ '-s', '--siblings' ], {
+  help: 'Retain for N siblings.',
+  action: 'store'
+});
+
+truncate.addArgument([ '-m', '--mark' ], {
+  help: 'Include marking of regarding trim.',
+  action: 'storeTrue'
+});
+
+// -- patch-yaml command --
+const patchYaml = subrc.addParser('patch-yaml', {
+  description: 'Patch source YAML with the given patcher.',
+  get 'help' () { return this.description },
+});
 
 function readFile({ path }) {
   return new Promise((resolve, reject) => {
@@ -22,119 +137,8 @@ function writeFile({ path, result }) {
   });
 }
 
-async function writeResult({ jsUpdatedSource }) {
-  const newFileName = `${process.argv[2].split('.').slice(0, -1).join('.')}-updated.json`;
-  // Output
-  try {
-    await writeFile({ path: newFileName, result: JSON.stringify(jsUpdatedSource, null, 2) });
-    console.log(`"${newFileName}" is created with your updates.`);
-  } catch (e) {
-    console.log(`Updates cannot be applied with error:\n${e}`);
-  }
-}
-
-function error() {
-  console.log(`
-Usage: rc [-h|--help] [-v|--version] [[-f|--file file] action [..args]]
-
-Positional arguments:
-  file                      Source YAML file to be processed
-  action                    Name of action to be performed
-  args                      Action arguments depending on chosen action
-
-Optional arguments:
-  -h, --help                Show this user manual and exit
-  -v, --version             Display version number and exit
-  -f, --file                Source YAML as file
-
-Actions:
-  insert [..args]           Insert YAML [file] under each [key] in source YAML
-  transform-d3              Transform source YAML into D3 Hierarchical JSON
-  transform-js              Transform source YAML into JSON using 'js-yaml' module
-  count-key                 Count number of keys in source YAML
-  mark-line [..args]        Mark [lineNo] in source YAML using markerMap in 'config.js'
-  count-junk-line [..args]  Count number of junk line in source YAML before [lineNo]
-  truncate [..args]         Truncate vertically by [level] and horizontally by [size] in YAML pivoted on [lineNo]
-  patch-yaml [..args]       Not yet implemented
-  `);
-}
-
-async function main() {
-  if (process.argv.length >= 4) {
-    const source = await readFile({ path: process.argv[2] });
-    // create Ryaml Object
-    const ryaml = new Ryaml(source);
-    // Main options
-    switch (process.argv[3]) {
-
-      case 'truncate':
-        if (process.argv.length === 6) {
-          const line_no = parseInt(process.argv[4], 10);
-          const level = parseInt(process.argv[5], 10);
-          writeResult({ jsUpdatedSource: ryaml.toRjson().truncate({ lineNo: line_no, level }).raw });
-        } else {
-          error();
-        }
-        break;
-
-      case 'count-junk-line':
-        if (process.argv.length === 5) {
-          const line_no = parseInt(process.argv[4], 10);
-          console.log(ryaml.countJunkLine({ lineNo: line_no }));
-        } else {
-          error();
-        }
-        break;
-
-      case 'mark-line':
-        if (process.argv.length === 5) {
-          const line_no = parseInt(process.argv[4], 10);
-          writeResult({ jsUpdatedSource: ryaml.toRjson().markLine({ lineNo: line_no }).raw });
-        } else {
-          error();
-        }
-        break;
-
-      case 'insert':
-        if (process.argv.length === 6) {
-          const _new = await readFile({ path: process.argv[5] });
-          const insertee = new Ryaml(_new).toRjson();
-          writeResult({ jsUpdatedSource: ryaml.toRjson().insert({ key: process.argv[4], insertee }).raw });
-        } else {
-          error();
-        }
-        break;
-
-      case 'transform-d3':
-        if (process.argv.length === 4) {
-          writeResult({ jsUpdatedSource: ryaml.toRjson().toD3() });
-        } else {
-          error();
-        }
-        break;
-
-      case 'count-key':
-        if (process.argv.length === 4) {
-          console.log(ryaml.toRjson().keyCount);
-        } else {
-          error();
-        }
-        break;
-
-      case 'transform-js':
-        if (process.argv.length === 4) {
-          writeResult({ jsUpdatedSource: ryaml.toRjson().raw });
-        } else {
-          error();
-        }
-        break;
-
-      default:
-        error();
-    }
-  } else {
-    error();
-  }
+function main() {
+  rc.parseArgs();
 }
 
 main();
