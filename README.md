@@ -25,7 +25,7 @@ npm install -g reyaml-core
 ```
 #### Usage
 ```
-Usage: rc [-h|--help] [-v|--version] [[-f|--file file] action [..args]]
+Usage: rc [-h|--help] [-v|--version] [-f|--file file] [action [..args]]
 
 Positional arguments:
   file                      Source YAML file to be processed

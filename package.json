@@ -8,6 +8,7 @@
   "description": "Core functionalities in project reyaml",
   "main": "index.js",
   "dependencies": {
+    "argparse": "^1.0.10",
     "js-yaml": "^3.13.1"
   },
   "devDependencies": {

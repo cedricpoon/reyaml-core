@@ -1,4 +1,4 @@
-const Ryaml = require('./object/Ryaml');
-const Rjson = require('./object/Rjson');
+const Ryaml = require('./lib/object/Ryaml');
+const Rjson = require('./lib/object/Rjson');
 
 module.exports = { Ryaml, Rjson };
