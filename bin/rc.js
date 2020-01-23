@@ -89,7 +89,7 @@ const countJunkLine = subrc.addParser('count-junk-line', {
   get 'help' () { return this.description },
 });
 
-countJunkLine.addArgument('lineNo', {
+countJunkLine.addArgument([ '-l', '--lineNo' ], {
   help: 'Line number for counting junk line before.',
   type: 'int',
   action: 'store'
