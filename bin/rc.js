@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// eslint-env node
+//eslint-env node
 
 const fs = require('fs');
 const { ArgumentParser } = require('argparse');
@@ -56,7 +56,7 @@ insert.addArgument('insertee', {
 // -- transform-d3 command --
 subrc.addParser('transform-d3', {
   description: 'Transform Source into D3 Hierarchical JSON.',
-  get 'help' () { return this.description },
+  get 'help' () { return this.description }
 });
 
 // -- transform-js command --
@@ -121,6 +121,7 @@ truncate.addArgument([ '-s', '--siblingSize' ], {
 
 truncate.addArgument([ '-m', '--trimMark' ], {
   help: 'Include marking of regarding trim.',
+  defaultValue: false,
   action: 'storeTrue'
 });
 
@@ -139,15 +140,6 @@ function readFile({ path }) {
   });
 }
 
-function writeFile({ path, result }) {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(path, result, (err) => {
-      if (err) { reject(err); }
-      resolve();
-    });
-  });
-}
-
 function fromPipeline() {
   return new Promise((resolve) => {
     process.stdin.on('data', payload => {
@@ -157,21 +149,64 @@ function fromPipeline() {
 }
 
 async function main() {
-  const args = rc.parseArgs();
-  console.log(args);
-  // construct source object
-  let source;
-  if (args._yamlPath) {
-    source = new Ryaml(await readFile({ path: args._yamlPath }));
-  } else if (args._jsonPath) {
-    source = new Rjson(await readFile({ path: args._jsonPath }));
-  } else {
-    const pipe = await fromPipeline();
-    try {
-      source = new Rjson(JSON.parse(pipe));
-    } catch (e) {
-      source = new Ryaml(pipe);
+  try {
+    // invoke argparse
+    const args = rc.parseArgs();
+
+    // construct source object
+    let source;
+    if (args._yamlPath) {
+      source = new Ryaml(await readFile({ path: args._yamlPath }));
+    } else if (args._jsonPath) {
+      source = new Rjson(JSON.parse(await readFile({ path: args._jsonPath })));
+    } else {
+      const pipe = await fromPipeline();
+      try {
+        source = new Rjson(JSON.parse(pipe));
+      } catch (e) {
+        source = new Ryaml(pipe);
+      }
     }
+
+    // controller
+    switch (args._action) {
+      case 'insert':
+        if (source instanceof Ryaml) source = source.toRjson();
+        console.log(JSON.stringify(source.insert({ 
+          ...args,
+          insertee: new Ryaml(await readFile({ path: args.insertee })).toRjson()
+        }).raw));
+        break;
+      case 'transform-d3':
+        if (source instanceof Ryaml) source = source.toRjson();
+        console.log(JSON.stringify(source.toD3()));
+        break;
+      case 'transform-js':
+        if (source instanceof Ryaml) source = source.toRjson();
+        console.log(JSON.stringify(source.raw));
+        break;
+      case 'count-key':
+        if (source instanceof Ryaml) source = source.toRjson();
+        console.log(source.keyCount);
+        break;
+      case 'mark-line':
+        if (source instanceof Ryaml) source = source.toRjson();
+        console.log(JSON.stringify(source.markLine({ ...args }).raw));
+        break;
+      case 'count-junk-line':
+        if (source instanceof Rjson) throw new TypeError('action not matched with source type');
+        console.log(source.countJunkLine({ ...args }));
+        break;
+      case 'truncate':
+        if (source instanceof Ryaml) source = source.toRjson();
+        console.log(JSON.stringify(source.truncate({ ...args }).raw));
+        break;
+      default:
+        throw new EvalError('action not implemented');
+    }
+  } catch (e) {
+    // mask unwanted error logs
+    console.log(`${rc.prog}: ${e.toString()}`);
   }
 }
 
