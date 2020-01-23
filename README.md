@@ -1,4 +1,8 @@
 # REyaml-Core
+![GitHub package.json version](https://img.shields.io/github/package-json/v/cedricpoon/reyaml-core)
+![David](https://img.shields.io/david/cedricpoon/reyaml-core)
+![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/cedricpoon/reyaml-core)
+
 Core & CLI in REyaml for **YAML** to **D3 Hierarchy** transformation, **YAML** textual processing, **JSON Object** [`Promise.js`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) alike traversal with modification, and more.
 
 >Inspired by and proudly using [**js-yaml**](https://github.com/nodeca/js-yaml).
@@ -27,71 +31,27 @@ import { Ryaml, Rjson } from 'reyaml-core';
 npm install -g reyaml-core
 ```
 #### Usage
-```
-Usage: rc [-h|--help] [-v|--version] [-f|--file file] [action [..args]]
-
-Positional arguments:
-  file                      Source YAML file to be processed
-  action                    Name of action to be performed
-  args                      Action arguments depending on chosen action
+```sh
+usage: rc [-h] [-v] [-Y YAML] [-J JSON] [ACTION] ...
 
 Optional arguments:
-  -h, --help                Show this user manual and exit
-  -v, --version             Display version number and exit
-  -f, --file                Source YAML as file
+  -h, --help            Show this help message and exit.
+  -v, --version         Show program's version number and exit.
+  -Y YAML, --yaml YAML  Source YAML as utf-8 file.
+  -J JSON, --json JSON  Source JSON as utf-8 file.
 
-Actions:
-  insert [..args]           Insert YAML [file] under each [key] in source YAML
-  transform-d3              Transform source YAML into D3 Hierarchical JSON
-  transform-js              Transform source YAML into JSON using 'js-yaml' module
-  count-key                 Count number of keys in source YAML
-  mark-line [..args]        Mark [lineNo] in source YAML using markerMap in 'config.js'
-  count-junk-line [..args]  Count number of junk line in source YAML before [lineNo]
-  truncate [..args]         Truncate vertically by [level] and horizontally by [size] in YAML pivoted on [lineNo]
-  patch-yaml [..args]       Not yet implemented
-```
-
-```
-Usage: rc insert [-h|--help] key insertee
-
-Positional arguments:
-  key                 Key in source YAML for inserting insertee YAML
-  insertee            Insertee YAML file
-
-Optional arguments:
-  -h, --help          Show this user manual and exit
-```
-
-```
-Usage: rc mark-line [-h|--help] lineNo
-
-Positional arguments:
-  lineNo              Line number for marking
-
-Optional arguments:
-  -h, --help          Show this user manual and exit
-```
-
-```
-Usage: rc count-junk-line [-h|--help] lineNo
-
-Positional arguments:
-  lineNo              Line number for counting junk line before
-
-Optional arguments:
-  -h, --help          Show this user manual and exit
-```
-
-```
-Usage: rc truncate [-h|--help] lineNo level siblingSize
-
-Positional arguments:
-  lineNo              Line number to pivot the truncation
-  level               Truncate for N level upward-downwards
-  siblingSize         Truncate for N siblings
-
-Optional arguments:
-  -h, --help          Show this user manual and exit
+Commands:
+  [ACTION]              List of available Actions.
+    insert              Insert YAML insertee under each key in Source.
+    transform-d3        Transform Source into D3 Hierarchical JSON.
+    transform-js        Transform Source into JSON using "js-yaml" module.
+    count-key           Count number of keys in Source.
+    mark-line           Mark lineNo in Source using markerMap in "config.js".
+    count-junk-line     Count number of junk line in source YAML before 
+                        lineNo.
+    truncate            Truncate vertically by level and horizontally by size 
+                        in YAML pivoted on lineNo.
+    patch-yaml          Patch source YAML with the given patcher.
 ```
 
 ## Testing
