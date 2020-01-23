@@ -1,7 +1,8 @@
 # REyaml-Core
-Core & CLI in REyaml for **YAML** to **D3 Hierarchy** transformation and more.
+Core & CLI in REyaml for **YAML** to **D3 Hierarchy** transformation, **YAML** textual processing, **JSON Object** [`Promise.js`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) alike traversal with modification, and more.
 
-Inspired by and proudly using [**js-yaml**](https://github.com/nodeca/js-yaml).
+>Inspired by and proudly using [**js-yaml**](https://github.com/nodeca/js-yaml).
+
 ```js
 new Ryaml('foo: bar').toRjson().toD3()
 ```
