@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://unpkg.com/reset-css/reset.css" />
+        <script src="https://cdn.jsdelivr.net/gh/nodeca/js-yaml/dist/js-yaml.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/cedricpoon/reyaml-core/dist/reyaml-core.min.js"></script>
+        <style>
+            .wrapper {
+                display: flex;
+                flex-direction: row;
+                height: 100%;
+            }
+            .item {
+                flex: 1;
+                font-size: 12px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wrapper">
+            <textarea class="item" id="textarea_from" placeholder="From YAML"></textarea>
+            <textarea class="item" id="textarea_to" placeholder="To D3 Hierarchical Tree" readonly></textarea class="item">
+        </div>
+        <script type="text/javascript">
+            const textarea_from = document.getElementById("textarea_from");
+            const textarea_to = document.getElementById("textarea_to");
+
+            textarea_from.addEventListener('input', () => {
+                textarea_to.value = JSON.stringify(
+                    new rc.Ryaml(textarea_from.value)
+                        .toRjson({ profile: 'd3Tree' })
+                        .toD3({ profile: 'd3Tree' })
+                );
+            });
+        </script>
+    </body>
+</html>
