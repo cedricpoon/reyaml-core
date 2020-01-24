@@ -65,10 +65,10 @@ Commands:
     patch-yaml          Patch source YAML with the given patcher.
 ```
 ### Bundled Library for Browsers
+> [jsDelivr](https://www.jsdelivr.com/) is suggested as CDN for this bundle.
 ```html
 <script src="reyaml-core.js"></script>
 ```
-> [**jsDelivr**](https://www.jsdelivr.com/) is suggested as CDN for this bundle.
 #### Usage
 ```html
 <!-- js-yaml is required as library dependency -->
