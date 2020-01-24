@@ -19,12 +19,13 @@
   },
   "scripts": {
     "start": "./bin/rc.js",
+    "headline": "echo \"/* $npm_package_name v$npm_package_version | https://github.com/cedricpoon/reyaml-core | Licensed in $npm_package_license */\"",
     "eslint": "node ./node_modules/.bin/eslint .",
     "test": "npm run eslint && npm audit",
     "debug": "node -i -e \"$(< index.js)\"",
     "debug-windows": "@powershell node -i -e \\\"$(Get-Content index.js)\\\"",
-    "build": "./node_modules/.bin/browserify ./index.js -s rc > ./dist/reyaml-core.js && npm run minify",
-    "minify": "./node_modules/.bin/uglifyjs ./dist/reyaml-core.js -c -m > ./dist/reyaml-core.min.js"
+    "build": "(echo \"$(npm run headline --silent)\" ; ./node_modules/.bin/browserify ./index.js -s rc) > ./dist/reyaml-core.js && npm run minify",
+    "minify": "./node_modules/.bin/uglifyjs ./dist/reyaml-core.js -cm -b \"beautify=false,preamble='$(npm run headline --silent)'\" > ./dist/reyaml-core.min.js"
   },
   "browserify": {
     "transform": [
