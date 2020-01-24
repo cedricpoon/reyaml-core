@@ -64,6 +64,25 @@ Commands:
                         in YAML pivoted on lineNo.
     patch-yaml          Patch source YAML with the given patcher.
 ```
+### Bundled Library for Browsers
+```html
+<script src="reyaml-core.js"></script>
+```
+> [**jsDelivr**](https://www.jsdelivr.com/) is suggested as CDN for this bundle.
+#### Usage
+```html
+<!-- js-yaml is required as library dependency -->
+<script src="https://cdn.jsdelivr.net/gh/nodeca/js-yaml/dist/js-yaml.min.js"></script>
+
+<!-- jsDelivr CDN link to reyaml-core -->
+<script src="https://cdn.jsdelivr.net/gh/cedricpoon/reyaml-core/dist/reyaml-core.min.js"></script>
+
+<script type="text/javascript">
+  document.write(JSON.stringify(
+    new rc.Ryaml('foo: bar').toRjson().toD3()
+  ));
+</script>
+```
 
 ## Testing
 ```sh
