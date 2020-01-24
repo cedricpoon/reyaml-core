@@ -66,6 +66,8 @@ Commands:
 ```
 ### Bundled Library for Browsers
 > [jsDelivr](https://www.jsdelivr.com/) is suggested as CDN for this bundle.
+
+[HTML Demo](https://raw.githack.com/cedricpoon/reyaml-core/master/dist/demo.html)
 ```html
 <script src="reyaml-core.js"></script>
 ```
