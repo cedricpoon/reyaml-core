@@ -14,21 +14,25 @@
   "devDependencies": {
     "browserify": "^16.5.0",
     "browserify-shim": "^3.8.14",
-    "eslint": "^6.8.0"
-  },
-  "browserify": {
-    "transform": [ "browserify-shim" ]
-  },
-  "browserify-shim": {
-    "js-yaml": "global:jsyaml"
+    "eslint": "^6.8.0",
+    "uglify-es": "^3.3.9"
   },
   "scripts": {
     "start": "./bin/rc.js",
-    "eslint": "node ./node_modules/eslint/bin/eslint.js .",
-    "test": "npm run eslint | npm audit",
+    "eslint": "node ./node_modules/.bin/eslint .",
+    "test": "npm run eslint && npm audit",
     "debug": "node -i -e \"$(< index.js)\"",
     "debug-windows": "@powershell node -i -e \\\"$(Get-Content index.js)\\\"",
-    "build": "./node_modules/browserify/bin/cmd.js ./index.js --exclude js-yaml -s rc > ./dist/reyaml-core.js"
+    "build": "./node_modules/.bin/browserify ./index.js -s rc > ./dist/reyaml-core.js && npm run minify",
+    "minify": "./node_modules/.bin/uglifyjs ./dist/reyaml-core.js -c -m > ./dist/reyaml-core.min.js"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "js-yaml": "global:jsyaml"
   },
   "author": "Cedric Poon <cedric@poons.me>",
   "license": "MIT"
