@@ -2,7 +2,7 @@
  Core & CLI in REyaml for YAML to D3 model transformation
 
 ## To-do
-- [ ] npm
+- [x] npm
 - [ ] cicd
 - [x] shrink modules and diversify objects
 - [x] cli
