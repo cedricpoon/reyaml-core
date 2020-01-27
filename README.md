@@ -1,6 +1,6 @@
 # REyaml-Core
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/cedricpoon/reyaml-core)
-![Node.js Package](https://github.com/cedricpoon/reyaml-core/workflows/Node.js%20Package/badge.svg)
+![build](https://github.com/cedricpoon/reyaml-core/workflows/build/badge.svg)
 ![David](https://img.shields.io/david/cedricpoon/reyaml-core)
 ![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/cedricpoon/reyaml-core)
 
