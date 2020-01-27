@@ -6,6 +6,15 @@
     "url": "git://github.com/cedricpoon/reyaml-core.git"
   },
   "description": "Core functionalities in project reyaml",
+  "keywords": [
+    "yaml",
+    "json",
+    "traverse",
+    "modify",
+    "patch",
+    "d3",
+    "cli"
+  ],
   "main": "index.js",
   "dependencies": {
     "argparse": "^1.0.10",
