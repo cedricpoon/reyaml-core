@@ -78,7 +78,7 @@ Commands:
 <script src="https://cdn.jsdelivr.net/gh/nodeca/js-yaml/dist/js-yaml.min.js"></script>
 
 <!-- jsDelivr CDN link to reyaml-core -->
-<script src="https://cdn.jsdelivr.net/gh/cedricpoon/reyaml-core/dist/reyaml-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reyaml-core/dist/reyaml-core.min.js"></script>
 
 <script type="text/javascript">
   document.write(JSON.stringify(
