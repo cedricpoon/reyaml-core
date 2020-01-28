@@ -1,26 +1,23 @@
-name: build
-
+name: npm publish
 on:
   release:
     types: [created]
-
 jobs:
-  ci-test:
+  pre-publish-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@latest
+      - uses: actions/setup-node@latest
         with:
           node-version: 12
       - run: npm ci
       - run: npm test
-
   publish-npm:
-    needs: ci-test
+    needs: pre-publish-test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@latest
+      - uses: actions/setup-node@latest
         with:
           node-version: 12
           registry-url: https://registry.npmjs.org/
