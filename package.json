@@ -1,6 +1,6 @@
 {
   "name": "reyaml-core",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "repository": {
     "type": "git",
     "url": "git://github.com/cedricpoon/reyaml-core.git"
@@ -16,7 +16,9 @@
     "cli"
   ],
   "main": "index.js",
-  "bin": "./bin/rc.js",
+  "bin": {
+    "rc": "./bin/rc.js"
+  },
   "dependencies": {
     "argparse": "^1.0.10",
     "js-yaml": "^3.13.1"
