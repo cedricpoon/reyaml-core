@@ -11,9 +11,6 @@ jobs:
         with:
           node-version: 12
       - run: npm ci
-      - name: Check if dependencies are up to date
       - run: npm audit
-      - name: Linter check
       - run: npm run eslint
-      - name: Check browserified version
       - run: npm run build-test
