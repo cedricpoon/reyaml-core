@@ -1,8 +1,8 @@
 # REyaml-Core
-![GitHub package.json version](https://img.shields.io/github/package-json/v/cedricpoon/reyaml-core)
-![build](https://github.com/cedricpoon/reyaml-core/workflows/build/badge.svg)
-![David](https://img.shields.io/david/cedricpoon/reyaml-core)
-![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/cedricpoon/reyaml-core)
+![npm package version](https://badgen.net/npm/v/reyaml-core)
+![npm publish](https://github.com/cedricpoon/reyaml-core/workflows/npm%20publish/badge.svg)
+![David](https://badgen.net/david/dep/cedricpoon/reyaml-core)
+![Snyk Vulnerabilities for npm package](https://img.shields.io/snyk/vulnerabilities/npm/reyaml-core)
 
 Core & CLI in REyaml for **YAML** to **D3 Hierarchy** transformation, **YAML** textual processing, **JSON Object** [`Promise.js`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) alike traversal with modification, and more.
 
