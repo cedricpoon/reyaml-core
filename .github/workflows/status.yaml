@@ -1,0 +1,14 @@
+name: status check
+on:
+  pull_request:
+    types: [assigned, opened, synchronize, reopened]
+jobs:
+  ci-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@latest
+      - uses: actions/setup-node@latest
+        with:
+          node-version: 12
+      - run: npm ci
+      - run: npm test
