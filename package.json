@@ -16,6 +16,7 @@
     "cli"
   ],
   "main": "index.js",
+  "bin": "./bin/rc.js",
   "dependencies": {
     "argparse": "^1.0.10",
     "js-yaml": "^3.13.1"
