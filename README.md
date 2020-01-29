@@ -1,10 +1,10 @@
-# REyaml-Core
+# REyaml-Core 📦
 [![npm version](https://badge.fury.io/js/reyaml-core.svg)](https://www.npmjs.com/package/reyaml-core)
 ![npm publish](https://github.com/cedricpoon/reyaml-core/workflows/npm%20publish/badge.svg)
 ![David](https://badgen.net/david/dep/cedricpoon/reyaml-core)
 [![Known Vulnerabilities](https://snyk.io/test/github/cedricpoon/reyaml-core/badge.svg)](https://snyk.io/test/github/cedricpoon/reyaml-core)
 
-Core & CLI in REyaml for **YAML** to **D3 Hierarchy** transformation, **YAML** textual processing, **JSON Object** [`Promise.js`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) alike traversal with modification, and more.
+Core & CLI in REyaml for **YAML** to **D3 Hierarchy** transformation, **YAML** textual processing, **JSON Object** [`Promise.js`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) alike traversal with modification, **JSON Object** window sliding, and more.
 
 >Inspired by and proudly using [**js-yaml**](https://github.com/nodeca/js-yaml).
 
