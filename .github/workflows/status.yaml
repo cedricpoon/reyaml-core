@@ -13,4 +13,5 @@ jobs:
       - run: npm ci
       - run: npm audit
       - run: npm run eslint
+      - run: npm run version-test
       - run: npm run build-test

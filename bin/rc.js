@@ -10,9 +10,10 @@ const { Ryaml, Rjson } = require('..');
 
 // -- top level command --
 const rc = new ArgumentParser({
-  prog: package_json.name.split('-').reduce((s, x) => s + x[0], ''),
+  description: `${package_json.description}`,
   version: package_json.version,
-  addHelp: true
+  addHelp: true,
+  epilog: `${package_json.name} :: v${package_json.version} :: ${package_json.repository.url}`
 });
 
 rc.addArgument([ '-Y', '--yaml' ], {

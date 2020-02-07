@@ -1,11 +1,11 @@
 {
   "name": "reyaml-core",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "repository": {
     "type": "git",
-    "url": "git://github.com/cedricpoon/reyaml-core.git"
+    "url": "https://github.com/cedricpoon/reyaml-core"
   },
-  "description": "Core functionalities in project reyaml",
+  "description": "Core & CLI in REyaml for YAML to D3 Hierarchy transformation, and more.",
   "keywords": [
     "yaml",
     "json",
@@ -31,13 +31,14 @@
   },
   "scripts": {
     "start": "./bin/rc.js",
-    "headline": "echo \"/* $npm_package_name v$npm_package_version | https://github.com/cedricpoon/reyaml-core | licensed in $npm_package_license */\"",
+    "headline": "echo \"/* $npm_package_name v$npm_package_version | $npm_package_repository_url | licensed in $npm_package_license */\"",
     "eslint": "node ./node_modules/.bin/eslint .",
     "build-test": "grep -l \"v$npm_package_version\" ./dist/reyaml-core.*",
-    "test": "npm audit && npm run eslint && npm run build-test",
+    "version-test": "npm view reyaml-core version | grep -vq $npm_package_version",
+    "test": "npm audit && npm run eslint && npm run version-test && npm run build-test",
     "debug": "node -i -e \"$(< index.js)\"",
     "debug-windows": "@powershell node -i -e \\\"$(Get-Content index.js)\\\"",
-    "build": "npm run browserify && npm run minify",
+    "build": "npm update && npm run browserify && npm run minify",
     "browserify": "(echo \"$(npm run headline --silent)\" ; ./node_modules/.bin/browserify ./index.js -s rc) > ./dist/reyaml-core.js",
     "minify": "./node_modules/.bin/uglifyjs ./dist/reyaml-core.js -cm -b \"beautify=false,preamble='$(npm run headline --silent)'\" > ./dist/reyaml-core.min.js"
   },
