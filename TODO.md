@@ -3,7 +3,7 @@
 
 ## To-do
 - [x] npm
-- [ ] cicd
+- [x] cicd
 - [x] shrink modules and diversify objects
 - [x] cli
 - [x] full documentation
